@@ -15,8 +15,8 @@
   --night:#16241e;--green:#243b32;--green-2:#365b4b;
   --cream:#f5f2e9;--cream-2:#ebe5d6;--paper:#fffdf8;
   --ink:#1f2a24;--muted:#66736b;--line:#e4dece;--field:#d6cfbe;
-  --amber:#e0a04a;--amber-ink:#8a5a14;
-  --ok:#2a7a4f;--red:#a83232;--red-bg:#fbe8e5;
+  --amber:#e0a04a;--amber-ink:#8a5a14;--amber-bg:#f8edd3;
+  --ok:#2a7a4f;--ok-bg:#e3f1e8;--red:#a83232;--red-bg:#fbe8e5;
   --serif:"Fraunces",Georgia,"Times New Roman",serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --shadow:0 1px 2px rgba(22,36,30,.05),0 12px 28px -14px rgba(22,36,30,.22);
@@ -36,30 +36,43 @@ header::after{content:"";position:absolute;inset:0;background:linear-gradient(10
 header h1{margin:0;font-family:var(--serif);font-weight:600;font-size:clamp(28px,6vw,38px);line-height:1.05;letter-spacing:-.01em}
 .sub{margin:8px 0 0;color:#cfd8d1;font-size:13px}
 
-/* Mise en page */
-/* minmax(0,1fr) : empêche le tableau du planning d'élargir toute la page sur mobile */
+/* Mise en page — minmax(0,1fr) empêche un tableau large d'élargir toute la page sur mobile */
 main{max-width:980px;margin:auto;padding:0 var(--pad) 40px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
-#employeeArea{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
-.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.view{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);scroll-margin-top:84px}
 h2{margin:0 0 14px;font-family:var(--serif);font-weight:600;font-size:21px;letter-spacing:-.005em}
 h3{margin:0 0 8px;font-family:var(--serif);font-weight:600;font-size:17px}
 .muted,.hint{color:var(--muted);font-size:12.5px;line-height:1.5}
-.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:14px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.hint{margin:12px 0 0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .panel-head h2{margin:0 0 2px}
-.section{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.mt{margin-top:14px}
+.mt-lg{margin-top:24px}
+.nowrap{white-space:nowrap}
 
-/* Onglets salariés */
-.tabs{position:sticky;top:0;z-index:10;display:flex;gap:6px;overflow-x:auto;margin:0 calc(-1*var(--pad));padding:12px var(--pad);background:rgba(245,242,233,.93);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);scrollbar-width:none}
+/* Navigation : vues (Équipe, Planning) d'un côté, salariés de l'autre */
+.tabs{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:6px;overflow-x:auto;margin:0 calc(-1*var(--pad));padding:12px var(--pad);background:rgba(245,242,233,.93);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;white-space:nowrap;border:1px solid var(--line);background:var(--paper);color:var(--green);padding:10px 16px;border-radius:999px;font:inherit;font-size:14.5px;font-weight:650;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid var(--line);background:var(--paper);color:var(--green);padding:9px 16px;border-radius:999px;font:inherit;font-size:14.5px;font-weight:650;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
 .tab:hover{border-color:var(--green-2)}
 .tab.active{background:var(--night);border-color:var(--night);color:var(--cream)}
+.tab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.tab-group{flex:0 0 auto;display:flex;gap:3px;padding:3px;border-radius:999px;background:var(--night)}
+.view-tab{border:0;background:transparent;color:#d6ded8;padding:8px 15px}
+.view-tab svg{width:17px;height:17px}
+.view-tab:hover{color:var(--cream)}
+.view-tab.active{background:var(--amber);color:var(--night)}
+.tab-sep{flex:0 0 1px;align-self:stretch;margin:6px 4px;background:var(--field)}
+.emp-tab{padding:5px 15px 5px 5px}
+.mini-av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--cream-2);color:var(--green);font-family:var(--serif);font-weight:600;font-size:14px}
+.emp-tab.active .mini-av{background:var(--amber);color:var(--night)}
 .tab.add{border-style:dashed;border-color:var(--field);background:transparent;color:var(--amber-ink)}
 
 /* Formulaires */
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:end}
 .field{display:grid;gap:6px;align-content:start}
 .full{grid-column:1/-1}
+.span2{grid-column:span 2}
 label{font-size:12.5px;color:var(--muted);font-weight:650}
 input,select{width:100%;min-width:0;min-height:46px;padding:11px 12px;border:1px solid var(--field);border-radius:12px;background:#fff;color:var(--ink);font:inherit;transition:border-color .15s,box-shadow .15s}
 input:focus,select:focus{outline:none;border-color:var(--green-2);box-shadow:0 0 0 3px rgba(224,160,74,.32)}
@@ -67,52 +80,122 @@ input[readonly]{background:var(--cream);font-weight:650;color:var(--green)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:10px 16px;border:1px solid var(--field);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;font-size:15px;font-weight:650;cursor:pointer;transition:background .15s,border-color .15s,transform .1s}
 .btn:hover{border-color:var(--green-2);background:#fff}
 .btn:active{transform:scale(.98)}
-.btn:focus-visible,.tab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .btn.primary{background:var(--night);border-color:var(--night);color:var(--cream)}
 .btn.primary:hover{background:var(--green);border-color:var(--green)}
 .btn.danger{background:var(--red-bg);border-color:#efcdc8;color:var(--red)}
 .btn.small{min-height:0;padding:6px 11px;font-size:12.5px;border-radius:9px}
+.btn.big{min-height:54px;padding:12px 28px;font-size:16.5px}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .check{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--cream);color:var(--ink);font-size:15px;font-weight:600;cursor:pointer}
 .check input{width:22px;height:22px;min-height:0;margin:0;accent-color:var(--green)}
+.status{margin:10px 0 0;min-height:1.2em;font-size:13px;font-weight:650;color:var(--muted)}
+.status.ok{color:var(--ok)}
+.status.warn{color:var(--red)}
 
-/* Compteurs */
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+/* Indicateurs et soldes */
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .stat{display:flex;flex-direction:column;justify-content:space-between;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:14px}
 .stat small{display:block;color:var(--muted);font-size:12px;line-height:1.3}
 .stat strong{display:block;margin-top:6px;font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
 .stat.hero{background:var(--night);border-color:var(--night);color:var(--cream)}
 .stat.hero small{color:#cfd8d1}
 .stat.hero strong{font-size:32px}
-.good{color:var(--ok)}
-.bad{color:var(--red)}
-.stat.hero .good{color:#8fd4a8}
-.stat.hero .bad{color:#f4a397}
+.stat.hero.owed strong{color:#f3c27a}
+.stat.hero.owes strong{color:#8fd4a8}
+.pill{display:inline-block;font-size:12px;font-weight:750;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.owed .pill{background:var(--amber-bg);color:var(--amber-ink)}
+.owed strong{color:var(--amber-ink)}
+.owes .pill{background:var(--ok-bg);color:var(--ok)}
+.owes strong{color:var(--ok)}
+.even .pill{background:var(--cream-2);color:var(--muted)}
+.even strong{color:var(--muted)}
+.st-now{background:var(--ok-bg);color:var(--ok)}
+.st-soon{background:var(--amber-bg);color:var(--amber-ink)}
+.st-past{background:var(--cream-2);color:var(--muted)}
 
-/* Listes et tableaux */
-.rowline{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
-.rowline:last-child{border-bottom:0}
-.person{gap:12px}
-.avatar{flex:0 0 42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--night);color:var(--amber);font-family:var(--serif);font-weight:600;font-size:19px}
-.person-main{flex:1;min-width:0}
-.person-side{display:grid;gap:6px;justify-items:end;text-align:right}
-.person-side strong{font-family:var(--serif);font-weight:600;font-size:21px;font-variant-numeric:tabular-nums}
+/* Récapitulatif d'équipe */
+.team-list{display:grid;gap:10px;margin-top:14px}
+.team-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.team-row:hover{border-color:var(--green-2);box-shadow:var(--shadow)}
+.team-row:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.team-row strong.name{font-size:16.5px}
+.tr-meta{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px;font-size:12.5px;color:var(--muted)}
+.tr-meta b{color:var(--ink);font-weight:650}
+.tr-bal{display:grid;justify-items:end;gap:5px;text-align:right}
+.tr-bal strong{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.avatar{flex:0 0 44px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--night);color:var(--amber);font-family:var(--serif);font-weight:600;font-size:19px}
+.avatar.big{flex-basis:56px;width:56px;height:56px;font-size:25px}
+.empty{color:var(--muted);text-align:center;padding:22px;font-family:var(--serif);font-style:italic}
+
+/* Planning d'équipe */
+.board th,.board td{text-align:center;padding:9px 5px}
+.board th:first-child,.board .who{text-align:left;padding-left:12px}
+.board .who{min-width:130px}
+.board td:last-child{padding-right:10px}
+.board .who small{display:block;margin-top:2px;color:var(--muted);font-size:11.5px}
+.board .who small.next{color:var(--amber-ink);font-weight:650}
+.slot{font-size:12px;line-height:1.5;white-space:nowrap;font-variant-numeric:tabular-nums}
+.slot.off{color:var(--muted);font-style:italic}
+.board td.is-today{background:#fbf3e2}
+.board th.is-today{background:#f3e2bd;color:var(--amber-ink)}
+.tot{font-family:var(--serif);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* Dossier salarié */
+.emp-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.emp-id{flex:1;min-width:180px}
+.emp-id h2{margin:0 0 2px;font-size:27px}
+.emp-links{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.day-top{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}
+.day-top .field{flex:0 1 230px}
+.dayplan{flex:1 1 300px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;min-height:46px;padding:7px 8px 7px 12px;border-radius:12px;background:#fbf3e2;border:1px dashed #e3c98f;font-size:13.5px}
+.note{display:block;margin-top:2px;color:var(--muted);font-size:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{padding:4px 10px;border-radius:999px;background:var(--cream);border:1px solid var(--line);font-size:12.5px}
+.meal-month,.schedule-from{max-width:260px;margin-bottom:10px}
+.fold>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary h2{margin:0 0 2px}
+.chev{flex:0 0 36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:transform .2s}
+.chev::before{content:"";width:8px;height:8px;border-right:2px solid var(--green);border-bottom:2px solid var(--green);transform:translateY(-2px) rotate(45deg)}
+.fold[open] .chev{transform:rotate(180deg)}
+.fold-body{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+details.mini{margin-top:4px}
+details.mini summary{cursor:pointer;color:var(--green-2);font-size:12.5px;font-weight:650}
+.week-detail{display:grid;gap:2px;margin-top:6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.week-detail span{display:inline-block;width:38px;color:var(--muted);font-weight:650}
+
+/* Tableaux */
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
 table{border-collapse:collapse;width:100%;font-size:13.5px}
 td,th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 th{background:var(--cream);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 tbody tr:last-child td{border-bottom:0}
-.tablewrap td input{min-width:96px;min-height:40px;padding:8px 9px}
+.sched td input{min-width:96px;min-height:40px;padding:8px 9px}
+.rowline{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
 .notice{background:#fbf1dc;border:1px solid #edd9a8;border-left:4px solid var(--amber);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;color:#4a3b1c}
-.hidden{display:none!important}
 .backupbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;font-size:13.5px}
-.meal-month{max-width:220px;margin-bottom:10px}
-.schedule-from{max-width:260px;margin-bottom:10px}
+.hidden{display:none!important}
+.toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));z-index:50;max-width:calc(100% - 32px);padding:12px 18px;border-radius:999px;background:var(--night);color:var(--cream);font-size:14.5px;font-weight:600;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transform:translate(-50%,16px);transition:opacity .2s,transform .2s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 
-@media(min-width:700px){:root{--pad:22px}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.panel{padding:22px}}
-@media(max-width:390px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}}
+@media(min-width:700px){
+  :root{--pad:22px}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stats.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .panel{padding:22px}
+}
+@media(max-width:699px){.stats.three .stat:last-child{grid-column:1/-1}}
+@media(max-width:520px){
+  .team-row{grid-template-columns:40px minmax(0,1fr)}
+  .team-row .avatar{width:40px;height:40px;flex-basis:40px}
+  .team-row .tr-bal{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
+  .btn.big{width:100%}
+}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
-</style></head>
+</style>
+</head>
 <body>
 <header><div class="head-in">
 <a class="back" href="../"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Accueil</a>
@@ -120,193 +203,433 @@ tbody tr:last-child td{border-bottom:0}
 <h1>Suivi du temps de travail</h1>
 <p class="sub">Une fiche complète par salarié · Compteur cumulatif</p>
 </div></header>
+
 <main>
 <div id="backupBar" class="notice backupbar hidden"></div>
-<nav id="employeeTabs" class="tabs" aria-label="Salariés">
- <button class="tab active" id="teamTab" onclick="showTeam()">Équipe</button>
-</nav>
-<section class="panel" id="teamPanel">
- <div class="panel-head"><div><h2>Vue d'équipe</h2><div class="muted">Synthèse des compteurs de tous les salariés</div></div><button class="btn primary" onclick="newEmployee()">＋ Ajouter un salarié</button></div>
- <div id="teamList"></div>
- <p class="hint">Sélectionne un onglet salarié en haut pour ouvrir son dossier individuel.</p>
-</section>
-<section class="panel hidden" id="profilePanel">
- <div class="panel-head"><div><h2>Fiche salarié</h2><div class="muted">Contrat, solde initial et planning théorique</div></div><button class="btn danger small" onclick="deleteEmployee()">Supprimer la fiche</button></div>
- <div class="field" style="display:none"><label>Salarié</label><select id="employeeSelect"></select></div>
- <div id="profile" class="hidden" style="margin-top:14px">
-  <div class="grid">
-   <div class="field"><label>Nom</label><input id="eName"></div>
-   <div class="field"><label>Type de contrat</label><select id="eType"><option>Temps plein</option><option>Temps partiel</option></select></div>
-   <div class="field"><label>Heures contractuelles / semaine</label><input id="eWeekly" type="number" min="0" step=".25"></div>
-   <div class="field"><label>Solde arrêté au (date incluse)</label><input id="eBalanceDate" type="date"></div>
-   <div class="field"><label>Solde à cette date (heures)</label><input id="eOpening" type="number" step=".25" placeholder="7.5 ou -5"></div>
-   <div class="field"><label>Fin de période de référence (facultatif)</label><input id="ePeriodEnd" type="date"></div>
-   <div class="field full"><label>Note</label><input id="eNote" placeholder="Poste, particularités…"></div>
-  </div>
-  <div class="section">
-   <h3>Planning théorique hebdomadaire</h3>
-   <p class="hint">Renseigne les horaires habituels. Deux services par jour sont possibles. Le planning sert de base au calcul des heures théoriquement prévues.</p>
-   <div class="field schedule-from"><label>Ce planning s'applique à partir du</label><input id="scheduleFrom" type="date"></div>
-   <div id="scheduleEditor"></div>
-   <div class="actions"><button class="btn" onclick="saveSchedule()">Enregistrer ce planning</button></div>
-   <div id="scheduleHistory" class="hint" style="margin-top:8px"></div>
-  </div>
-  <div class="actions"><button class="btn primary" onclick="saveProfile()">Enregistrer la fiche</button><button class="btn danger" onclick="deleteEmployee()">Supprimer le salarié</button></div>
-  <p class="hint">Le solde saisi comprend toute la période jusqu'à la date indiquée, incluse. Le calcul automatique reprend le lendemain : les heures travaillées, payées et théoriques de la période antérieure ne sont pas recomptées. Solde positif : l'entreprise doit des heures au salarié. Solde négatif : solde en faveur de l'entreprise, à vérifier selon les règles applicables.</p>
- </div>
-</section>
-<section id="employeeArea" class="hidden">
+<nav id="nav" class="tabs" aria-label="Navigation"></nav>
+
+<!-- Vue Équipe : une ligne par salarié -->
+<section id="viewTeam" class="view">
  <section class="panel">
-  <h2>Compte temps actuel</h2>
+  <div class="panel-head"><div><h2>Récapitulatif de l'équipe</h2><div class="muted">Solde de chaque salarié à aujourd'hui</div></div><button class="btn primary" data-action="new-employee">＋ Ajouter un salarié</button></div>
+  <div id="teamKpis" class="stats three"></div>
+  <div id="teamList" class="team-list"></div>
+  <p class="hint">« On lui doit » : le salarié a travaillé plus que prévu (heures à payer ou à faire récupérer). « Nous doit » : il a travaillé moins que prévu. Touchez une ligne pour ouvrir le dossier.</p>
+ </section>
+</section>
+
+<!-- Vue Planning : plannings de tous les salariés, en lecture seule -->
+<section id="viewPlanning" class="view hidden">
+ <section class="panel">
+  <div class="panel-head"><div><h2>Planning de l'équipe</h2><div class="muted" id="planningSub"></div></div></div>
+  <div id="planningBoard"></div>
+  <p class="hint">Consultation seule. « Modifier » ouvre le dossier du salarié : le nouveau planning s'applique à partir de la date choisie et les précédents restent dans son historique.</p>
+ </section>
+</section>
+
+<!-- Vue Salarié : on arrive directement sur la saisie de la journée -->
+<section id="viewEmployee" class="view hidden">
+ <section class="panel emp-head">
+  <span class="avatar big" id="empAvatar" aria-hidden="true"></span>
+  <div class="emp-id"><h2 id="empName"></h2><div class="muted" id="empMeta"></div>
+   <div class="emp-links"><button class="btn small" data-action="goto-planning">Planning</button><button class="btn small" data-action="goto-profile">Fiche et contrat</button></div></div>
+  <div class="tr-bal" id="empBal"></div>
+ </section>
+
+ <section class="panel" id="dayPanel">
+  <h2>Enregistrer une journée</h2>
+  <div class="day-top">
+   <div class="field"><label for="wDate">Date</label><input id="wDate" type="date"></div>
+   <div id="dayPlan" class="dayplan hidden"></div>
+  </div>
+  <div class="grid">
+   <div class="field"><label for="wStart1">Arrivée – service 1</label><input id="wStart1" type="time"></div>
+   <div class="field"><label for="wEnd1">Départ – service 1</label><input id="wEnd1" type="time"></div>
+   <div class="field"><label for="wStart2">Arrivée – service 2 (facultatif)</label><input id="wStart2" type="time"></div>
+   <div class="field"><label for="wEnd2">Départ – service 2 (facultatif)</label><input id="wEnd2" type="time"></div>
+   <div class="field"><label for="wBreak">Pause à déduire (minutes)</label><input id="wBreak" type="number" min="0" step="5" value="0" inputmode="numeric"></div>
+   <div class="field"><label for="wCalculated">Temps travaillé calculé</label><input id="wCalculated" readonly placeholder="—"></div>
+   <div class="field span2"><label for="wNote">Commentaire</label><input id="wNote" placeholder="Service, remplacement…"></div>
+   <div class="full"><label class="check"><input id="wMeal" type="checkbox"> Repas pris ce jour</label></div>
+  </div>
+  <div class="actions"><button class="btn primary big" data-action="add-work">Enregistrer la journée</button></div>
+  <p class="hint">Un ou deux services possibles dans la même journée. La pause est déduite du total. Les horaires de nuit après minuit sont pris en compte.</p>
+ </section>
+
+ <section class="panel">
+  <h2>Compte temps</h2>
   <div class="stats">
-   <div class="stat hero"><small>Solde actuel</small><strong id="balance">—</strong></div>
+   <div class="stat hero" id="balanceTile"><small>Solde actuel</small><strong id="balance">—</strong><small id="balanceLabel"></small></div>
    <div class="stat"><small>Solde de départ</small><strong id="openingDisplay">—</strong></div>
    <div class="stat"><small>Heures travaillées depuis le départ</small><strong id="workedDisplay">—</strong></div>
    <div class="stat"><small>Heures complémentaires payées</small><strong id="paidDisplay">—</strong></div>
   </div>
   <p class="hint" id="balanceExplain"></p>
  </section>
- <section class="panel">
-  <h2>Ajouter une journée travaillée</h2>
-  <div class="grid">
-   <div class="field"><label>Date</label><input id="wDate" type="date"></div>
-   <div class="field"><label>Arrivée – service 1</label><input id="wStart1" type="time"></div>
-   <div class="field"><label>Départ – service 1</label><input id="wEnd1" type="time"></div>
-   <div class="field"><label>Arrivée – service 2 (facultatif)</label><input id="wStart2" type="time"></div>
-   <div class="field"><label>Départ – service 2 (facultatif)</label><input id="wEnd2" type="time"></div>
-   <div class="field"><label>Pause à déduire (minutes)</label><input id="wBreak" type="number" min="0" step="5" value="0"></div>
-   <div class="field"><label>Temps travaillé calculé</label><input id="wCalculated" readonly placeholder="—"></div>
-   <div class="field"><label>Commentaire</label><input id="wNote" placeholder="Service, remplacement…"></div>
-   <div class="field full"><label class="check"><input id="wMeal" type="checkbox"> Repas pris ce jour</label></div>
-  </div>
-  <div class="actions"><button class="btn primary" onclick="addWork()">Enregistrer la journée</button></div>
-  <p class="hint">Tu peux renseigner un ou deux services dans la même journée. La pause indiquée est déduite du total des deux services. Les horaires de nuit après minuit sont pris en compte.</p>
- </section>
- <section class="panel">
-  <h2>Heures complémentaires payées</h2>
-  <div class="grid">
-   <div class="field"><label>Date de paiement</label><input id="pDate" type="date"></div>
-   <div class="field"><label>Nombre d'heures payées</label><input id="pHours" type="number" min="0" step=".25"></div>
-   <div class="field full"><label>Commentaire / bulletin de paie</label><input id="pNote" placeholder="Paie de novembre…"></div>
-  </div>
-  <div class="actions"><button class="btn primary" onclick="addPaid()">Enregistrer les heures payées</button></div>
- </section>
+
  <section class="panel">
   <h2>Historique des journées</h2><div id="workHistory"></div>
  </section>
+
  <section class="panel">
-  <h2>Historique des heures payées</h2><div id="paidHistory"></div>
+  <h2>Heures complémentaires payées</h2>
+  <div class="grid">
+   <div class="field"><label for="pDate">Date de paiement</label><input id="pDate" type="date"></div>
+   <div class="field"><label for="pHours">Nombre d'heures payées</label><input id="pHours" type="number" min="0" step=".25" inputmode="decimal"></div>
+   <div class="field span2"><label for="pNote">Commentaire / bulletin de paie</label><input id="pNote" placeholder="Paie de novembre…"></div>
+  </div>
+  <div class="actions"><button class="btn primary" data-action="add-paid">Enregistrer les heures payées</button></div>
+  <div id="paidHistory" class="mt"></div>
  </section>
+
  <section class="panel">
-  <h2>Récapitulatif des repas</h2>
-  <div class="field meal-month"><label>Mois</label><input id="mealMonth" type="month"></div>
+  <h2>Repas</h2>
+  <div class="field meal-month"><label for="mealMonth">Mois</label><input id="mealMonth" type="month"></div>
   <div id="mealSummary"></div>
  </section>
+
+ <details class="panel fold" id="planningBox">
+  <summary><div><h2>Planning théorique</h2><div class="muted" id="planningSummary"></div></div><span class="chev" aria-hidden="true"></span></summary>
+  <div class="fold-body">
+   <p class="hint" style="margin-top:0">Horaires habituels, deux services possibles par jour. Le planning sert à calculer les heures prévues. Un nouveau planning s'applique à partir de la date choisie ; les précédents restent dans l'historique.</p>
+   <div class="field schedule-from mt"><label for="scheduleFrom">Ce planning s'applique à partir du</label><input id="scheduleFrom" type="date"></div>
+   <div id="scheduleEditor"></div>
+   <div class="actions"><button class="btn primary" data-action="save-schedule">Enregistrer ce planning</button></div>
+   <h3 class="mt-lg">Historique des plannings</h3>
+   <div id="scheduleHistory"></div>
+  </div>
+ </details>
+
+ <details class="panel fold" id="profileBox">
+  <summary><div><h2>Fiche salarié</h2><div class="muted">Contrat et solde de départ · enregistrement automatique</div></div><span class="chev" aria-hidden="true"></span></summary>
+  <div class="fold-body">
+   <div class="grid">
+    <div class="field"><label for="eName">Nom</label><input id="eName" autocomplete="off"></div>
+    <div class="field"><label for="eType">Type de contrat</label><select id="eType"><option>Temps plein</option><option>Temps partiel</option></select></div>
+    <div class="field"><label for="eWeekly">Heures contractuelles / semaine</label><input id="eWeekly" type="number" min="0" step=".25" inputmode="decimal"></div>
+    <div class="field"><label for="eBalanceDate">Solde arrêté au (date incluse)</label><input id="eBalanceDate" type="date"></div>
+    <div class="field"><label for="eOpening">Solde à cette date (heures)</label><input id="eOpening" type="number" step=".25" placeholder="7.5 ou -5" inputmode="decimal"></div>
+    <div class="field"><label for="ePeriodEnd">Fin de période de référence (facultatif)</label><input id="ePeriodEnd" type="date"></div>
+    <div class="field span2"><label for="eNote">Note</label><input id="eNote" placeholder="Poste, particularités…"></div>
+   </div>
+   <p id="profileStatus" class="status"></p>
+   <p class="hint">Le solde saisi couvre toute la période jusqu'à la date indiquée, incluse. Le calcul automatique reprend le lendemain. Solde positif : l'entreprise doit des heures au salarié. Solde négatif : solde en faveur de l'entreprise, à vérifier selon les règles applicables.</p>
+   <div class="actions"><button class="btn danger" data-action="delete-employee">Supprimer ce salarié et tout son historique</button></div>
+  </div>
+ </details>
 </section>
+
 <section class="panel">
  <h2>Sauvegarde et transfert</h2>
- <div class="actions"><button class="btn primary" onclick="exportData()">Exporter les données</button><label class="btn" for="importFile">Importer une sauvegarde</label><input id="importFile" type="file" accept="application/json" style="display:none" onchange="importData(event)"></div>
+ <div class="actions"><button class="btn primary" data-action="export">Exporter les données</button><label class="btn" for="importFile">Importer une sauvegarde</label><input id="importFile" type="file" accept="application/json" class="hidden"></div>
  <p class="hint">Les données restent sur cet appareil et dans ce navigateur. Pour les transférer vers un autre appareil, exporte puis importe le fichier JSON.</p>
- <div class="notice">Conserve une sauvegarde régulière. Évite la navigation privée et ne supprime pas les données du navigateur sans sauvegarde.</div>
+ <div class="notice mt">Conserve une sauvegarde régulière. Évite la navigation privée et ne supprime pas les données du navigateur sans sauvegarde.</div>
 </section>
 </main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
 <script>
+/* ---------- Données (même format qu'avant : compatibles avec les saisies existantes) ---------- */
 const KEY='suivi_temps_salaries_v2';
+function normalize(d){
+ if(!d||typeof d!=='object')d={};
+ for(const k of ['employees','work','paid'])if(!Array.isArray(d[k]))d[k]=[];
+ if(!d.meta||typeof d.meta!=='object')d.meta={}; // lastChange / lastExport pour le rappel de sauvegarde
+ d.work=d.work.map(x=>({...x,meal:!!x.meal}));
+ return d;
+}
 let db;try{db=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){db=null}
-if(!db)db={employees:[],work:[],paid:[]};
-if(!Array.isArray(db.employees))db.employees=[];
-if(!Array.isArray(db.work))db.work=[];
-if(!Array.isArray(db.paid))db.paid=[];
-if(!db.meta||typeof db.meta!=='object')db.meta={}; // lastChange / lastExport pour le rappel de sauvegarde
-db.work=db.work.map(x=>({...x,meal:!!x.meal}));
-let currentId=null;
+db=normalize(db);
+
+let view='team',currentId=null,loadedId=null,saveTimer=null;
+
+/* ---------- Outils ---------- */
 const $=id=>document.getElementById(id);
-const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const today=()=>ymd(new Date());
-$('wDate').value=today();$('pDate').value=today();$('mealMonth').value=today().slice(0,7);
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function fmt(n){let sign=n<0?'-':'';n=Math.abs(n);let h=Math.floor(n+1e-8),m=Math.round((n-h)*60);if(m===60){h++;m=0}return sign+h+' h'+(m?' '+String(m).padStart(2,'0'):'');}
-function store(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Enregistrement impossible dans ce navigateur (navigation privée ?). Exporte tes données.');}}
-function persist(){db.meta.lastChange=Date.now();store();renderAll();}
+const parse=s=>new Date(s+'T12:00:00');
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ymd(d)};
+const nextDate=s=>addDays(s,1);
+const mondayOf=s=>addDays(s,-((parse(s).getDay()+6)%7));
+const frDate=s=>s?parse(s).toLocaleDateString('fr-FR'):'';
+const frDay=s=>s?parse(s).toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'}):'';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const initial=n=>(String(n||'?').trim().charAt(0)||'?').toUpperCase();
+function fmt(n){if(!Number.isFinite(n))return '—';if(Math.abs(n)<1/120)n=0;let sign=n<0?'-':'';n=Math.abs(n);let h=Math.floor(n+1e-8),m=Math.round((n-h)*60);if(m===60){h++;m=0}return sign+h+' h'+(m?' '+pad(m):'')}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2800)}
+function store(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Enregistrement impossible dans ce navigateur (navigation privée ?). Exporte tes données.')}}
+function persist(){db.meta.lastChange=Date.now();store();renderAll()}
 function selected(){return db.employees.find(e=>e.id===currentId)}
-function duration(a,b){if(!a||!b)return 0;let [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);let mins=bh*60+bm-(ah*60+am);if(mins<0)mins+=1440;return mins/60;}
-function calcHours(){let a=duration($('wStart1').value,$('wEnd1').value),b=duration($('wStart2').value,$('wEnd2').value),br=Number($('wBreak').value||0)/60;let total=a+b-br;$('wCalculated').value=total>=0?fmt(total):'Pause supérieure aux heures';return total;}
-['wStart1','wEnd1','wStart2','wEnd2','wBreak'].forEach(id=>$(id).addEventListener('input',calcHours));
-function accrued(weekly,from,to){if(!from||!to||to<from)return 0;let days=Math.floor((new Date(to+'T12:00:00')-new Date(from+'T12:00:00'))/86400000)+1;return Number(weekly||0)*days/7;}
+
+/* ---------- Calculs (inchangés) ---------- */
+function duration(a,b){if(!a||!b)return 0;let [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);let mins=bh*60+bm-(ah*60+am);if(mins<0)mins+=1440;return mins/60}
+function accrued(weekly,from,to){if(!from||!to||to<from)return 0;let days=Math.floor((parse(to)-parse(from))/86400000)+1;return Number(weekly||0)*days/7}
 const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-function emptySchedule(){let o={};for(let d=0;d<7;d++)o[d]={a:'',b:'',c:'',d:''};return o;}
-function shiftDuration(a,b){return duration(a,b);}
-function scheduleDayHours(day){return shiftDuration(day.a,day.b)+shiftDuration(day.c,day.d);}
-function renderScheduleEditor(e){
- let sch=emptySchedule();
- if(e.schedules&&e.schedules.length){let latest=[...e.schedules].sort((a,b)=>b.from.localeCompare(a.from))[0];sch=latest.days||sch;$('scheduleFrom').value=today();}
- else {$('scheduleFrom').value=e.balanceDate||today();}
- $('scheduleEditor').innerHTML='<div class="tablewrap"><table><thead><tr><th>Jour</th><th>Service 1 début</th><th>Fin</th><th>Service 2 début</th><th>Fin</th><th>Total</th></tr></thead><tbody>'+
- dayNames.map((name,d)=>{let x=sch[d]||{};return `<tr><td>${name}</td><td><input type="time" id="s${d}a" value="${x.a||''}"></td><td><input type="time" id="s${d}b" value="${x.b||''}"></td><td><input type="time" id="s${d}c" value="${x.c||''}"></td><td><input type="time" id="s${d}d" value="${x.d||''}"></td><td id="st${d}">${fmt(scheduleDayHours(x))}</td></tr>`}).join('')+'</tbody></table></div>';
- for(let d=0;d<7;d++)['a','b','c','d'].forEach(k=>$(`s${d}${k}`).addEventListener('input',()=>{let x={a:$(`s${d}a`).value,b:$(`s${d}b`).value,c:$(`s${d}c`).value,d:$(`s${d}d`).value};$(`st${d}`).textContent=fmt(scheduleDayHours(x));}));
- renderScheduleHistory(e);
-}
-function renderScheduleHistory(e){
- let arr=[...(e.schedules||[])].sort((a,b)=>b.from.localeCompare(a.from));
- $('scheduleHistory').innerHTML=arr.length?'<strong>Plannings enregistrés :</strong><br>'+arr.map(x=>`À partir du ${esc(x.from)} · ${fmt(Object.values(x.days||{}).reduce((n,d)=>n+scheduleDayHours(d),0))} / semaine`).join('<br>'):'Aucun planning enregistré : le calcul reste basé sur le volume contractuel hebdomadaire réparti sur 7 jours.';
-}
-function saveSchedule(){
- let e=selected();if(!e)return;let from=$('scheduleFrom').value;if(!from){alert('Indique la date d’application du planning.');return;}
- let days={};for(let d=0;d<7;d++){let x={a:$(`s${d}a`).value,b:$(`s${d}b`).value,c:$(`s${d}c`).value,d:$(`s${d}d`).value};if((x.a&&!x.b)||(!x.a&&x.b)||(x.c&&!x.d)||(!x.c&&x.d)){alert('Chaque service doit avoir une heure de début et de fin.');return;}days[d]=x;}
- let weekly=Object.values(days).reduce((n,x)=>n+scheduleDayHours(x),0);
- if(!confirm(`Enregistrer ce planning à partir du ${from} ?\nTotal hebdomadaire prévu : ${fmt(weekly)}.\nLe planning sera utilisé pour calculer les heures théoriques à partir de cette date.`))return;
- if(!Array.isArray(e.schedules))e.schedules=[];
- e.schedules=e.schedules.filter(x=>x.from!==from);e.schedules.push({from,days});
- persist();
-}
+const SHORT=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const WEEK=[1,2,3,4,5,6,0]; // affichage du lundi au dimanche
+function emptySchedule(){let o={};for(let d=0;d<7;d++)o[d]={a:'',b:'',c:'',d:''};return o}
+function scheduleDayHours(day){day=day||{};return duration(day.a,day.b)+duration(day.c,day.d)}
+function shiftsText(day){day=day||{};const p=[];if(day.a&&day.b)p.push(day.a+'–'+day.b);if(day.c&&day.d)p.push(day.c+'–'+day.d);return p}
+const sortedSchedules=e=>[...(e.schedules||[])].sort((a,b)=>a.from.localeCompare(b.from));
+const weeklyOf=s=>Object.values(s.days||{}).reduce((n,d)=>n+scheduleDayHours(d),0);
+function scheduleAt(e,date){let r=null;for(const s of sortedSchedules(e)){if(s.from<=date)r=s;else break}return r}
+function nextScheduleAfter(e,date){return sortedSchedules(e).find(s=>s.from>date)||null}
 function expectedFromSchedule(e,from,to){
  let schedules=(e.schedules||[]).filter(x=>x.from<=to).sort((a,b)=>a.from.localeCompare(b.from));
  if(!schedules.length)return null;
- let total=0,cur=new Date(from+'T12:00:00'),end=new Date(to+'T12:00:00');
- while(cur<=end){let ds=cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')+'-'+String(cur.getDate()).padStart(2,'0');
-  let applicable=null;for(let x of schedules){if(x.from<=ds)applicable=x;else break;}
-  if(applicable){let day=applicable.days[cur.getDay()]||{};total+=scheduleDayHours(day);}
+ let total=0,cur=parse(from),end=parse(to);
+ while(cur<=end){let ds=ymd(cur);
+  let applicable=null;for(let x of schedules){if(x.from<=ds)applicable=x;else break}
+  if(applicable)total+=scheduleDayHours(applicable.days[cur.getDay()]);
   else total+=Number(e.weekly||0)/7; // jours avant le premier planning : volume du contrat
   cur.setDate(cur.getDate()+1);
  }
  return total;
 }
-function nextDate(date){let d=new Date(date+'T12:00:00');d.setDate(d.getDate()+1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function totals(e){let asOf=e.balanceDate||today(),from=nextDate(asOf),to=today();if(to<from)return{actual:0,paid:0,expected:0,balance:Number(e.opening||0)};let works=db.work.filter(x=>x.employee===e.id&&x.date>asOf&&x.date<=to);let paid=db.paid.filter(x=>x.employee===e.id&&x.date>asOf&&x.date<=to);let actual=works.reduce((s,x)=>s+Number(x.hours||0),0),paidH=paid.reduce((s,x)=>s+Number(x.hours||0),0),scheduled=expectedFromSchedule(e,from,to),expected=scheduled===null?accrued(e.weekly,from,to):scheduled;return{actual,paid:paidH,expected,balance:Number(e.opening||0)+actual-expected-paidH};}
-function renderSelect(){
- let sel=$('employeeSelect');sel.innerHTML='<option value="">— Choisir un salarié —</option>'+db.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');sel.value=currentId||'';
- let nav=$('employeeTabs');nav.innerHTML='<button class="tab '+(!currentId?'active':'')+'" id="teamTab" onclick="showTeam()">Équipe</button>'+db.employees.map(e=>`<button class="tab ${currentId===e.id?'active':''}" onclick="openEmployee('${e.id}')">${esc(e.name||'Salarié')}</button>`).join('')+'<button class="tab add" onclick="newEmployee()">＋ Ajouter</button>';
+function totals(e){let asOf=e.balanceDate||today(),from=nextDate(asOf),to=today();if(to<from)return{actual:0,paid:0,expected:0,balance:Number(e.opening||0)};let works=db.work.filter(x=>x.employee===e.id&&x.date>asOf&&x.date<=to);let paid=db.paid.filter(x=>x.employee===e.id&&x.date>asOf&&x.date<=to);let actual=works.reduce((s,x)=>s+Number(x.hours||0),0),paidH=paid.reduce((s,x)=>s+Number(x.hours||0),0),scheduled=expectedFromSchedule(e,from,to),expected=scheduled===null?accrued(e.weekly,from,to):scheduled;return{actual,paid:paidH,expected,balance:Number(e.opening||0)+actual-expected-paidH}}
+function balanceInfo(b){if(!(Math.abs(b)>=1/120))return{cls:'even',label:'À jour',txt:'0 h'};return b>0?{cls:'owed',label:'On lui doit',txt:fmt(b)}:{cls:'owes',label:'Nous doit',txt:fmt(-b)}}
+
+/* ---------- Navigation ---------- */
+const ICON_TEAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+const ICON_CAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+function renderNav(){
+ const v=(id,label,icon)=>`<button class="tab view-tab ${view===id?'active':''}" data-action="view" data-view="${id}">${icon}${label}</button>`;
+ $('nav').innerHTML='<div class="tab-group">'+v('team','Équipe',ICON_TEAM)+v('planning','Planning',ICON_CAL)+'</div><span class="tab-sep"></span>'
+  +db.employees.map(e=>`<button class="tab emp-tab ${view==='employee'&&currentId===e.id?'active':''}" data-action="open" data-id="${esc(e.id)}"><span class="mini-av" aria-hidden="true">${esc(initial(e.name))}</span>${esc(e.name||'Salarié')}</button>`).join('')
+  +'<button class="tab add" data-action="new-employee">＋ Ajouter</button>';
 }
-function showTeam(){currentId=null;renderAll();}
-function openEmployee(id){currentId=id;renderAll();}
-$('employeeSelect').onchange=()=>{currentId=$('employeeSelect').value||null;renderAll();};
-function newEmployee(){let e={id:String(Date.now()),name:'Nouveau salarié',type:'Temps partiel',weekly:0,balanceDate:today(),opening:0,periodEnd:'',note:''};db.employees.push(e);currentId=e.id;persist();$('eName').focus();$('eName').select();}
-// Fiche affichée dans le formulaire : on ne recharge les champs qu'au changement de salarié,
-// sinon un enregistrement (journée, planning…) effacerait les modifications non encore enregistrées.
-let loadedId=null;
-function loadProfile(){let e=selected();$('profile').classList.toggle('hidden',!e);$('profilePanel').classList.toggle('hidden',!e);$('employeeArea').classList.toggle('hidden',!e);$('teamPanel').classList.toggle('hidden',!!e);if(!e){loadedId=null;return;}if(e.id===loadedId){renderScheduleHistory(e);return;}loadedId=e.id;$('eName').value=e.name;$('eType').value=e.type||'Temps partiel';$('eWeekly').value=e.weekly;$('eBalanceDate').value=e.balanceDate||today();$('eOpening').value=e.opening==null?0:e.opening;$('ePeriodEnd').value=e.periodEnd||'';$('eNote').value=e.note||'';renderScheduleEditor(e);}
-function saveProfile(){let e=selected();if(!e)return;let name=$('eName').value.trim(),weekly=Number($('eWeekly').value),date=$('eBalanceDate').value;if(!name||!date||!Number.isFinite(weekly)||weekly<0){alert('Vérifie le nom, la date de départ et les heures hebdomadaires.');return;}e.name=name;e.type=$('eType').value;e.weekly=weekly;e.balanceDate=date;e.opening=Number($('eOpening').value||0);e.periodEnd=$('ePeriodEnd').value;e.note=$('eNote').value;persist();}
-function deleteEmployee(){let e=selected();if(!e||!confirm('Supprimer cette fiche et tout son historique ?'))return;db.employees=db.employees.filter(x=>x.id!==e.id);db.work=db.work.filter(x=>x.employee!==e.id);db.paid=db.paid.filter(x=>x.employee!==e.id);currentId=null;persist();}
-function addWork(){let e=selected();if(!e)return;let date=$('wDate').value,a=$('wStart1').value,b=$('wEnd1').value,c=$('wStart2').value,d=$('wEnd2').value,br=Number($('wBreak').value||0);if(!date||(!a&&!c)|| (a&&!b)||(b&&!a)||(c&&!d)||(d&&!c)){alert('Renseigne une date et des horaires complets pour chaque service commencé.');return;}let hours=duration(a,b)+duration(c,d)-br/60;if(hours<=0){alert('Le temps travaillé calculé doit être supérieur à zéro. Vérifie les horaires et la pause.');return;}db.work.push({id:String(Date.now()),employee:e.id,date,hours,start1:a,end1:b,start2:c,end2:d,breakMinutes:br,meal:$('wMeal').checked,note:$('wNote').value});$('wStart1').value='';$('wEnd1').value='';$('wStart2').value='';$('wEnd2').value='';$('wBreak').value='0';$('wMeal').checked=false;$('wNote').value='';calcHours();persist();}
-function addPaid(){let e=selected();if(!e)return;let date=$('pDate').value,h=Number($('pHours').value);if(!date||!Number.isFinite(h)||h<=0){alert('Renseigne une date et un nombre d’heures supérieur à zéro.');return;}db.paid.push({id:String(Date.now()),employee:e.id,date,hours:h,note:$('pNote').value});$('pHours').value='';$('pNote').value='';persist();}
-function removeItem(type,id){if(!confirm('Supprimer cette ligne de l’historique ?'))return;db[type]=db[type].filter(x=>x.id!==id);persist();}
-function workTable(e){let arr=db.work.filter(x=>x.employee===e.id).sort((a,b)=>b.date.localeCompare(a.date));if(!arr.length)return'<p class="muted">Aucune journée saisie.</p>';return'<div class="tablewrap"><table><thead><tr><th>Date</th><th>Horaires</th><th>Pause</th><th>Total</th><th>Repas</th><th></th></tr></thead><tbody>'+arr.map(x=>{let shifts=[x.start1&&x.end1?x.start1+'–'+x.end1:'',x.start2&&x.end2?x.start2+'–'+x.end2:''].filter(Boolean).join(' / ')||'Ancienne saisie';return`<tr><td>${esc(x.date)}</td><td>${esc(shifts)}</td><td>${Number(x.breakMinutes||0)} min</td><td>${fmt(Number(x.hours))}</td><td>${x.meal?'Oui':'—'}</td><td><button class="btn small danger" onclick="removeItem('work','${x.id}')">Suppr.</button></td></tr>`}).join('')+'</tbody></table></div>';}
-function paidTable(e){let arr=db.paid.filter(x=>x.employee===e.id).sort((a,b)=>b.date.localeCompare(a.date));if(!arr.length)return'<p class="muted">Aucune heure payée enregistrée.</p>';return'<div class="tablewrap"><table><thead><tr><th>Date</th><th>Heures payées</th><th>Commentaire</th><th></th></tr></thead><tbody>'+arr.map(x=>`<tr><td>${esc(x.date)}</td><td>${fmt(Number(x.hours))}</td><td>${esc(x.note)}</td><td><button class="btn small danger" onclick="removeItem('paid','${x.id}')">Suppr.</button></td></tr>`).join('')+'</tbody></table></div>';}
-function renderArea(){let e=selected();if(!e)return;let t=totals(e);$('balance').textContent=fmt(t.balance);$('balance').className=t.balance>=0?'good':'bad';$('openingDisplay').textContent=fmt(Number(e.opening||0));$('workedDisplay').textContent=fmt(t.actual);$('paidDisplay').textContent=fmt(t.paid);$('balanceExplain').textContent=`Solde de reprise arrêté au ${e.balanceDate||'date non définie'} (date incluse). Le nouveau calcul commence le lendemain : heures travaillées (${fmt(t.actual)}) − heures théoriques prévues (${fmt(t.expected)}) − heures complémentaires payées (${fmt(t.paid)}). ${e.schedules&&e.schedules.length?'Calcul basé sur le planning hebdomadaire enregistré.':'En l’absence de planning, le volume hebdomadaire du contrat est réparti sur 7 jours.'}`; $('workHistory').innerHTML=workTable(e);$('paidHistory').innerHTML=paidTable(e);let month=$('mealMonth').value||today().slice(0,7),n=db.work.filter(x=>x.employee===e.id&&x.date.startsWith(month)&&x.meal).length;$('mealSummary').innerHTML=`<div class="rowline"><span>${esc(e.name)} · ${month}</span><strong>${n} repas</strong></div>`;}
-$('mealMonth').onchange=()=>{let e=selected();if(e)renderArea();};
+function showView(v){flushProfile();view=v;currentId=null;renderAll();window.scrollTo({top:0})}
+function openEmployee(id,section){
+ flushProfile();
+ if(currentId!==id){$('profileBox').open=false;$('planningBox').open=false;clearDayForm()}
+ currentId=id;view='employee';renderAll();
+ if(section)reveal(section);else window.scrollTo({top:0});
+}
+function reveal(boxId){const b=$(boxId);b.open=true;setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'start'}),30)}
+
+/* ---------- Vue Équipe ---------- */
 function renderTeam(){
- $('teamList').innerHTML=db.employees.length?db.employees.map(e=>{let t=totals(e);return `<div class="rowline person"><span class="avatar" aria-hidden="true">${esc((e.name||'?').trim().charAt(0).toUpperCase())}</span><div class="person-main"><strong>${esc(e.name)}</strong><div class="muted">${Number(e.weekly||0)} h / semaine · ${esc(e.type||'')}</div></div><div class="person-side"><strong class="${t.balance>=0?'good':'bad'}">${fmt(t.balance)}</strong><button class="btn small" onclick="openEmployee('${e.id}')">Ouvrir le dossier</button></div></div>`}).join(''):'<p class="muted">Aucun salarié. Clique sur « Ajouter » pour créer une fiche.</p>';
+ const t=today(),mon=mondayOf(t),sun=addDays(mon,6),month=t.slice(0,7);
+ let owed=0,owes=0;
+ const rows=db.employees.map(e=>{
+  const tt=totals(e),bi=balanceInfo(tt.balance);
+  if(bi.cls==='owed')owed+=tt.balance;else if(bi.cls==='owes')owes-=tt.balance;
+  const mine=db.work.filter(x=>x.employee===e.id);
+  const week=mine.filter(x=>x.date>=mon&&x.date<=sun).reduce((s,x)=>s+Number(x.hours||0),0);
+  const sch=expectedFromSchedule(e,mon,sun),planned=sch===null?Number(e.weekly||0):sch;
+  const meals=mine.filter(x=>x.meal&&x.date.startsWith(month)).length;
+  const last=mine.reduce((m,x)=>x.date>m?x.date:m,'');
+  return `<article class="team-row" data-action="open" data-id="${esc(e.id)}" tabindex="0">
+   <span class="avatar" aria-hidden="true">${esc(initial(e.name))}</span>
+   <div><strong class="name">${esc(e.name)}</strong><div class="muted">${esc(e.type||'')} · ${fmt(Number(e.weekly||0))} / semaine</div>
+    <div class="tr-meta"><span>Cette semaine : <b>${fmt(week)}</b> / ${fmt(planned)} prévues</span><span>Repas ce mois : <b>${meals}</b></span><span>Dernière journée : <b>${last?frDay(last):'—'}</b></span></div></div>
+   <div class="tr-bal ${bi.cls}"><span class="pill">${bi.label}</span><strong>${bi.txt}</strong></div>
+  </article>`;
+ }).join('');
+ $('teamKpis').innerHTML=`<div class="stat owed"><small>Heures dues aux salariés</small><strong>${fmt(owed)}</strong></div><div class="stat owes"><small>Heures dues par les salariés</small><strong>${fmt(owes)}</strong></div><div class="stat"><small>Salariés suivis</small><strong>${db.employees.length}</strong></div>`;
+ $('teamList').innerHTML=rows||'<p class="empty">Aucun salarié pour le moment. Ajoute une première fiche.</p>';
 }
-function renderAll(){renderSelect();loadProfile();renderTeam();let e=selected();if(e)renderArea();renderBackupBar();}
-function exportData(){db.meta.lastExport=Date.now();let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sauvegarde-temps-travail-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),60000);store();renderBackupBar();}
-function importData(ev){let f=ev.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.employees)||!Array.isArray(d.work)||!Array.isArray(d.paid))throw Error();if(!confirm('Remplacer toutes les données actuelles par cette sauvegarde ?'))return;db=d;if(!db.meta||typeof db.meta!=='object')db.meta={};loadedId=null;currentId=(db.employees[0]&&db.employees[0].id)||null;persist();alert('Sauvegarde importée.');}catch(e){alert('Fichier invalide ou incompatible.');}};r.readAsText(f);ev.target.value='';}
+
+/* ---------- Vue Planning ---------- */
+function renderPlanningBoard(){
+ const t=today(),dow=parse(t).getDay(),mon=mondayOf(t);
+ $('planningSub').textContent=`Semaine du ${frDate(mon)} · planning en vigueur aujourd'hui`;
+ if(!db.employees.length){$('planningBoard').innerHTML='<p class="empty">Aucun salarié.</p>';return}
+ const head='<tr><th>Salarié</th>'+WEEK.map(d=>`<th class="${d===dow?'is-today':''}">${SHORT[d]}</th>`).join('')+'<th>Total</th><th></th></tr>';
+ const rows=db.employees.map(e=>{
+  const cur=scheduleAt(e,t),nxt=nextScheduleAfter(e,t),s=cur||nxt;
+  const sub=cur?'depuis le '+frDate(cur.from):nxt?'à partir du '+frDate(nxt.from):'aucun planning';
+  const who=`<td class="who"><strong>${esc(e.name)}</strong><small>${sub}</small>${cur&&nxt?`<small class="next">Nouveau planning le ${frDate(nxt.from)}</small>`:''}</td>`;
+  const btn=`<td><button class="btn small" data-action="edit-planning" data-id="${esc(e.id)}">${s?'Modifier':'Créer'}</button></td>`;
+  if(!s)return `<tr>${who}<td colspan="7" class="muted">Pas de planning : volume du contrat réparti sur 7 jours</td><td class="tot">${fmt(Number(e.weekly||0))}</td>${btn}</tr>`;
+  const cells=WEEK.map(d=>{const sh=shiftsText(s.days[d]);return `<td class="slot ${sh.length?'':'off'} ${d===dow?'is-today':''}">${sh.length?sh.map(esc).join('<br>'):'Repos'}</td>`}).join('');
+  return `<tr>${who}${cells}<td class="tot">${fmt(weeklyOf(s))}</td>${btn}</tr>`;
+ }).join('');
+ $('planningBoard').innerHTML=`<div class="tablewrap"><table class="board"><thead>${head}</thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ---------- Vue Salarié ---------- */
+// Les champs de la fiche ne sont rechargés qu'au changement de salarié,
+// pour ne jamais écraser ce qui est en cours de saisie.
+function loadProfile(e){
+ if(e.id===loadedId)return;
+ loadedId=e.id;
+ $('eName').value=e.name||'';$('eType').value=e.type||'Temps partiel';$('eWeekly').value=e.weekly??0;$('eBalanceDate').value=e.balanceDate||today();$('eOpening').value=e.opening==null?0:e.opening;$('ePeriodEnd').value=e.periodEnd||'';$('eNote').value=e.note||'';
+ $('profileStatus').textContent='';$('profileStatus').className='status';
+ renderScheduleEditor(e);
+}
+function renderEmployee(){
+ const e=selected();if(!e)return;
+ loadProfile(e);
+ const t=totals(e),bi=balanceInfo(t.balance);
+ $('empAvatar').textContent=initial(e.name);
+ $('empName').textContent=e.name||'Salarié';
+ $('empMeta').textContent=[e.type,fmt(Number(e.weekly||0))+' / semaine',e.note].filter(Boolean).join(' · ');
+ $('empBal').className='tr-bal '+bi.cls;$('empBal').innerHTML=`<span class="pill">${bi.label}</span><strong>${bi.txt}</strong>`;
+ $('balanceTile').className='stat hero '+bi.cls;$('balance').textContent=bi.txt;$('balanceLabel').textContent=bi.label;
+ $('openingDisplay').textContent=fmt(Number(e.opening||0));$('workedDisplay').textContent=fmt(t.actual);$('paidDisplay').textContent=fmt(t.paid);
+ $('balanceExplain').textContent=`Solde de reprise arrêté au ${frDate(e.balanceDate)||'date non définie'} (date incluse). Le calcul reprend le lendemain : heures travaillées (${fmt(t.actual)}) − heures prévues (${fmt(t.expected)}) − heures complémentaires payées (${fmt(t.paid)}). ${e.schedules&&e.schedules.length?'Heures prévues calculées avec le planning enregistré.':'Sans planning, le volume hebdomadaire du contrat est réparti sur 7 jours.'}`;
+ $('workHistory').innerHTML=workTable(e);$('paidHistory').innerHTML=paidTable(e);
+ renderMeals(e);renderScheduleHistory(e);renderDayPlan();
+ const cur=scheduleAt(e,today()),nxt=nextScheduleAfter(e,today());
+ $('planningSummary').textContent=cur?`${fmt(weeklyOf(cur))} / semaine · en vigueur depuis le ${frDate(cur.from)}`+(nxt?` · nouveau planning le ${frDate(nxt.from)}`:''):nxt?`Planning à partir du ${frDate(nxt.from)}`:'Aucun planning enregistré';
+}
+
+/* Journée */
+function calcHours(){const a=$('wStart1').value,b=$('wEnd1').value,c=$('wStart2').value,d=$('wEnd2').value;if(!a&&!b&&!c&&!d){$('wCalculated').value='';return 0}const total=duration(a,b)+duration(c,d)-Number($('wBreak').value||0)/60;$('wCalculated').value=total>=0?fmt(total):'Pause supérieure aux heures';return total}
+['wStart1','wEnd1','wStart2','wEnd2','wBreak'].forEach(id=>$(id).addEventListener('input',calcHours));
+function clearDayForm(){['wStart1','wEnd1','wStart2','wEnd2','wNote'].forEach(id=>$(id).value='');$('wBreak').value='0';$('wMeal').checked=false;calcHours()}
+function plannedDay(e,date){const s=date&&scheduleAt(e,date);return s?(s.days[parse(date).getDay()]||{}):null}
+function renderDayPlan(){
+ const e=selected(),box=$('dayPlan'),day=e&&plannedDay(e,$('wDate').value);
+ if(!day){box.classList.add('hidden');return}
+ const sh=shiftsText(day);box.classList.remove('hidden');
+ box.innerHTML=sh.length?`<span>Prévu au planning : <b>${esc(sh.join(' / '))}</b> · ${fmt(scheduleDayHours(day))}</span><button class="btn small" data-action="fill-planning">Reprendre ces horaires</button>`:'<span>Repos prévu au planning ce jour-là.</span>';
+}
+function fillFromPlanning(){const e=selected(),day=e&&plannedDay(e,$('wDate').value);if(!day)return;$('wStart1').value=day.a||'';$('wEnd1').value=day.b||'';$('wStart2').value=day.c||'';$('wEnd2').value=day.d||'';calcHours()}
+$('wDate').addEventListener('change',renderDayPlan);
+function addWork(){
+ const e=selected();if(!e)return;
+ const date=$('wDate').value,a=$('wStart1').value,b=$('wEnd1').value,c=$('wStart2').value,d=$('wEnd2').value,br=Number($('wBreak').value||0);
+ if(!date||(!a&&!c)||(a&&!b)||(b&&!a)||(c&&!d)||(d&&!c)){alert('Renseigne une date et des horaires complets pour chaque service commencé.');return}
+ const hours=duration(a,b)+duration(c,d)-br/60;
+ if(hours<=0){alert('Le temps travaillé calculé doit être supérieur à zéro. Vérifie les horaires et la pause.');return}
+ const same=db.work.filter(x=>x.employee===e.id&&x.date===date);
+ if(same.length&&!confirm(`Une journée est déjà enregistrée le ${frDay(date)} (${fmt(same.reduce((s,x)=>s+Number(x.hours||0),0))}).\nAjouter quand même cette nouvelle saisie ?`))return;
+ flushProfile();
+ db.work.push({id:uid(),employee:e.id,date,hours,start1:a,end1:b,start2:c,end2:d,breakMinutes:br,meal:$('wMeal').checked,note:$('wNote').value});
+ clearDayForm();persist();toast(`Journée du ${frDay(date)} enregistrée · ${fmt(hours)}`);
+}
+function addPaid(){const e=selected();if(!e)return;const date=$('pDate').value,h=Number($('pHours').value);if(!date||!Number.isFinite(h)||h<=0){alert('Renseigne une date et un nombre d’heures supérieur à zéro.');return}db.paid.push({id:uid(),employee:e.id,date,hours:h,note:$('pNote').value});$('pHours').value='';$('pNote').value='';persist();toast(`${fmt(h)} payées enregistrées`)}
+function removeItem(type,id){if(!confirm('Supprimer cette ligne de l’historique ?'))return;db[type]=db[type].filter(x=>x.id!==id);persist()}
+function workTable(e){
+ const arr=db.work.filter(x=>x.employee===e.id).sort((a,b)=>b.date.localeCompare(a.date));
+ if(!arr.length)return '<p class="muted">Aucune journée saisie.</p>';
+ return '<div class="tablewrap"><table><thead><tr><th>Date</th><th>Horaires</th><th>Pause</th><th>Total</th><th>Repas</th><th></th></tr></thead><tbody>'+arr.map(x=>{const shifts=[x.start1&&x.end1?x.start1+'–'+x.end1:'',x.start2&&x.end2?x.start2+'–'+x.end2:''].filter(Boolean).join(' / ')||'Ancienne saisie';return `<tr><td class="nowrap">${frDay(x.date)}</td><td>${esc(shifts)}${x.note?`<small class="note">${esc(x.note)}</small>`:''}</td><td class="nowrap">${Number(x.breakMinutes||0)} min</td><td class="tot">${fmt(Number(x.hours))}</td><td>${x.meal?'Oui':'—'}</td><td><button class="btn small danger" data-action="remove-work" data-id="${esc(x.id)}">Suppr.</button></td></tr>`}).join('')+'</tbody></table></div>';
+}
+function paidTable(e){
+ const arr=db.paid.filter(x=>x.employee===e.id).sort((a,b)=>b.date.localeCompare(a.date));
+ if(!arr.length)return '<p class="muted">Aucune heure payée enregistrée.</p>';
+ return '<div class="tablewrap"><table><thead><tr><th>Date</th><th>Heures payées</th><th>Commentaire</th><th></th></tr></thead><tbody>'+arr.map(x=>`<tr><td class="nowrap">${frDate(x.date)}</td><td class="tot">${fmt(Number(x.hours))}</td><td>${esc(x.note)}</td><td><button class="btn small danger" data-action="remove-paid" data-id="${esc(x.id)}">Suppr.</button></td></tr>`).join('')+'</tbody></table></div>';
+}
+function renderMeals(e){
+ const month=$('mealMonth').value||today().slice(0,7);
+ const list=db.work.filter(x=>x.employee===e.id&&x.meal&&x.date.startsWith(month)).sort((a,b)=>a.date.localeCompare(b.date));
+ const label=parse(month+'-15').toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+ $('mealSummary').innerHTML=`<div class="rowline"><span>${esc(e.name)} · ${label}</span><strong>${list.length} repas</strong></div>`+(list.length?`<div class="chips">${list.map(x=>`<span class="chip">${frDay(x.date)}</span>`).join('')}</div>`:'');
+}
+$('mealMonth').addEventListener('change',()=>{const e=selected();if(e)renderMeals(e)});
+
+/* Planning du salarié (versionné : chaque planning a une date de début) */
+function readScheduleDay(d){return{a:$(`s${d}a`).value,b:$(`s${d}b`).value,c:$(`s${d}c`).value,d:$(`s${d}d`).value}}
+function renderScheduleEditor(e){
+ const arr=sortedSchedules(e),latest=arr[arr.length-1],sch=latest?latest.days:emptySchedule();
+ $('scheduleFrom').value=latest?today():(e.balanceDate||today());
+ const lab={a:'début service 1',b:'fin service 1',c:'début service 2',d:'fin service 2'};
+ $('scheduleEditor').innerHTML='<div class="tablewrap"><table class="sched"><thead><tr><th>Jour</th><th>Service 1 début</th><th>Fin</th><th>Service 2 début</th><th>Fin</th><th>Total</th></tr></thead><tbody>'
+  +WEEK.map(d=>{const x=sch[d]||{};return `<tr><td>${dayNames[d]}</td>${['a','b','c','d'].map(k=>`<td><input type="time" id="s${d}${k}" data-sday="${d}" value="${esc(x[k]||'')}" aria-label="${dayNames[d]}, ${lab[k]}"></td>`).join('')}<td id="st${d}" class="tot"></td></tr>`}).join('')
+  +'</tbody></table></div><p class="hint" id="schedWeekly"></p>';
+ updateScheduleTotals();
+}
+function updateScheduleTotals(){let w=0;for(let d=0;d<7;d++){const h=scheduleDayHours(readScheduleDay(d));w+=h;$(`st${d}`).textContent=fmt(h)}$('schedWeekly').textContent='Total hebdomadaire : '+fmt(w)}
+$('scheduleEditor').addEventListener('input',ev=>{if(ev.target.dataset.sday!==undefined)updateScheduleTotals()});
+function saveSchedule(){
+ const e=selected();if(!e)return;const from=$('scheduleFrom').value;
+ if(!from){alert('Indique la date d’application du planning.');return}
+ const days={};
+ for(let d=0;d<7;d++){const x=readScheduleDay(d);if((x.a&&!x.b)||(!x.a&&x.b)||(x.c&&!x.d)||(!x.c&&x.d)){alert(`${dayNames[d]} : chaque service doit avoir une heure de début et de fin.`);return}days[d]=x}
+ const weekly=Object.values(days).reduce((n,x)=>n+scheduleDayHours(x),0);
+ const replacing=(e.schedules||[]).some(x=>x.from===from);
+ if(!confirm(`${replacing?'Remplacer le planning du':'Enregistrer ce planning à partir du'} ${frDate(from)} ?\nTotal hebdomadaire prévu : ${fmt(weekly)}.\nLes plannings précédents restent dans l’historique.`))return;
+ if(!Array.isArray(e.schedules))e.schedules=[];
+ e.schedules=e.schedules.filter(x=>x.from!==from);e.schedules.push({from,days});
+ persist();toast('Planning enregistré');
+}
+function removeSchedule(from){const e=selected();if(!e)return;if(!confirm(`Supprimer le planning du ${frDate(from)} de l’historique ?\nLes heures prévues seront recalculées sans lui.`))return;e.schedules=(e.schedules||[]).filter(x=>x.from!==from);persist();renderScheduleEditor(e)}
+function renderScheduleHistory(e){
+ const arr=sortedSchedules(e),t=today();
+ if(!arr.length){$('scheduleHistory').innerHTML=`<p class="muted">Aucun planning enregistré : le calcul utilise le volume du contrat (${fmt(Number(e.weekly||0))} / semaine) réparti sur 7 jours.</p>`;return}
+ const rows=arr.map((s,i)=>{
+  const next=arr[i+1];
+  const st=s.from>t?['À venir','soon']:(next&&next.from<=t)?['Terminé','past']:['En cours','now'];
+  const period=next?`Du ${frDate(s.from)} au ${frDate(addDays(next.from,-1))}`:(s.from>t?'À partir du ':'Depuis le ')+frDate(s.from);
+  const detail=WEEK.map(d=>{const sh=shiftsText(s.days[d]);return `<div><span>${SHORT[d]}</span>${sh.length?esc(sh.join(' / ')):'<i>Repos</i>'}</div>`}).join('');
+  return `<tr><td><strong>${period}</strong><details class="mini"><summary>Voir les horaires</summary><div class="week-detail">${detail}</div></details></td><td><span class="pill st-${st[1]}">${st[0]}</span></td><td class="tot">${fmt(weeklyOf(s))}</td><td><button class="btn small danger" data-action="remove-schedule" data-from="${esc(s.from)}">Suppr.</button></td></tr>`;
+ }).reverse().join('');
+ $('scheduleHistory').innerHTML=`<div class="tablewrap"><table><thead><tr><th>Période</th><th>Statut</th><th>Total / sem.</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* Fiche : enregistrement automatique (plus de bouton à ne pas oublier) */
+const PROFILE_FIELDS=['eName','eType','eWeekly','eBalanceDate','eOpening','ePeriodEnd','eNote'];
+function saveProfile(){
+ clearTimeout(saveTimer);saveTimer=null;
+ const e=selected();if(!e||loadedId!==e.id)return;
+ const name=$('eName').value.trim(),weekly=Number($('eWeekly').value||0),date=$('eBalanceDate').value,opening=Number($('eOpening').value||0),st=$('profileStatus');
+ if(!name||!date||!Number.isFinite(weekly)||weekly<0||!Number.isFinite(opening)){st.textContent='Non enregistré : vérifie le nom, la date du solde et les heures.';st.className='status warn';return}
+ Object.assign(e,{name,type:$('eType').value,weekly,balanceDate:date,opening,periodEnd:$('ePeriodEnd').value,note:$('eNote').value});
+ persist();st.textContent='✓ Enregistré';st.className='status ok';
+}
+function flushProfile(){if(saveTimer)saveProfile()}
+PROFILE_FIELDS.forEach(id=>{
+ $(id).addEventListener('input',()=>{clearTimeout(saveTimer);saveTimer=setTimeout(saveProfile,600);$('profileStatus').textContent='Enregistrement…';$('profileStatus').className='status'});
+ $(id).addEventListener('change',saveProfile);
+});
+function newEmployee(){
+ flushProfile();
+ const name=prompt('Prénom du nouveau salarié :');if(name===null)return;
+ const e={id:uid(),name:name.trim()||'Nouveau salarié',type:'Temps partiel',weekly:0,balanceDate:today(),opening:0,periodEnd:'',note:''};
+ db.employees.push(e);currentId=e.id;view='employee';clearDayForm();$('planningBox').open=false;
+ persist();reveal('profileBox');toast('Fiche créée : complète le contrat');
+}
+function deleteEmployee(){const e=selected();if(!e||!confirm(`Supprimer la fiche de ${e.name} et tout son historique ?`))return;db.employees=db.employees.filter(x=>x.id!==e.id);db.work=db.work.filter(x=>x.employee!==e.id);db.paid=db.paid.filter(x=>x.employee!==e.id);currentId=null;loadedId=null;view='team';persist()}
+
+/* ---------- Sauvegarde ---------- */
+function exportData(){flushProfile();db.meta.lastExport=Date.now();let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sauvegarde-temps-travail-'+today()+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);store();renderBackupBar()}
+function importData(ev){let f=ev.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.employees)||!Array.isArray(d.work)||!Array.isArray(d.paid))throw Error();if(!confirm('Remplacer toutes les données actuelles par cette sauvegarde ?'))return;db=normalize(d);currentId=null;loadedId=null;view='team';persist();alert('Sauvegarde importée.')}catch(e){alert('Fichier invalide ou incompatible.')}};r.readAsText(f);ev.target.value=''}
+$('importFile').addEventListener('change',importData);
 // Rappel : une sauvegarde par jour dès qu'il y a des modifications non exportées
 function renderBackupBar(){
  let m=db.meta,last=m.lastExport?ymd(new Date(m.lastExport)):'',hasData=db.employees.length||db.work.length||db.paid.length;
  let needed=hasData&&(!last||((m.lastChange||0)>m.lastExport&&last!==today()));
  $('backupBar').classList.toggle('hidden',!needed);if(!needed)return;
- $('backupBar').innerHTML='<span><strong>Sauvegarde du jour à faire</strong> — '+(last?'dernière sauvegarde le '+esc(last):'aucune sauvegarde faite sur cet appareil')+'</span><button class="btn primary small" onclick="exportData()">Exporter maintenant</button>';
+ $('backupBar').innerHTML='<span><strong>Sauvegarde du jour à faire</strong> — '+(last?'dernière sauvegarde le '+frDate(last):'aucune sauvegarde faite sur cet appareil')+'</span><button class="btn primary small" data-action="export">Exporter maintenant</button>';
 }
+
+/* ---------- Rendu et événements ---------- */
+function renderAll(){
+ if(view==='employee'&&!selected())view='team';
+ renderNav();
+ $('viewTeam').classList.toggle('hidden',view!=='team');
+ $('viewPlanning').classList.toggle('hidden',view!=='planning');
+ $('viewEmployee').classList.toggle('hidden',view!=='employee');
+ if(view==='team')renderTeam();else if(view==='planning')renderPlanningBoard();else renderEmployee();
+ renderBackupBar();
+}
+document.addEventListener('click',ev=>{
+ const el=ev.target.closest('[data-action]');if(!el)return;
+ const id=el.dataset.id;
+ switch(el.dataset.action){
+  case 'view':showView(el.dataset.view);break;
+  case 'open':openEmployee(id);break;
+  case 'edit-planning':openEmployee(id,'planningBox');break;
+  case 'goto-planning':reveal('planningBox');break;
+  case 'goto-profile':reveal('profileBox');break;
+  case 'new-employee':newEmployee();break;
+  case 'add-work':addWork();break;
+  case 'add-paid':addPaid();break;
+  case 'fill-planning':fillFromPlanning();break;
+  case 'save-schedule':saveSchedule();break;
+  case 'remove-schedule':removeSchedule(el.dataset.from);break;
+  case 'remove-work':removeItem('work',id);break;
+  case 'remove-paid':removeItem('paid',id);break;
+  case 'delete-employee':deleteEmployee();break;
+  case 'export':exportData();break;
+ }
+});
+document.addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.matches('.team-row')){ev.preventDefault();openEmployee(ev.target.dataset.id)}});
+
 // Appli restée ouverte après minuit : dates de saisie et compteurs passent au nouveau jour
 let lastDay=today();
 function checkDayChange(){
@@ -314,11 +637,16 @@ function checkDayChange(){
  if($('wDate').value===old)$('wDate').value=t;
  if($('pDate').value===old)$('pDate').value=t;
  if($('mealMonth').value===old.slice(0,7))$('mealMonth').value=t.slice(0,7);
- renderTeam();let e=selected();if(e)renderArea();renderBackupBar();
+ renderAll();
 }
 setInterval(checkDayChange,60000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDayChange();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flushProfile();else checkDayChange()});
+window.addEventListener('pagehide',flushProfile);
 window.addEventListener('focus',checkDayChange);
+
+$('wDate').value=today();$('pDate').value=today();$('mealMonth').value=today().slice(0,7);
 renderAll();
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{}); // évite l'effacement automatique des données par le navigateur
-</script></body></html>
+</script>
+</body>
+</html>
