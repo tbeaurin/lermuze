@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#18231f"><title>Suivi du temps de travail</title>
+<style>
+:root{--bg:#f3f6f4;--panel:#fff;--ink:#1d2924;--muted:#68766f;--line:#dce4df;--green:#1d6b4c;--red:#b64b43}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#18231f;color:white;padding:20px 16px}header h1{font-size:21px;margin:0 0 4px}header p{margin:0;color:#c6d2cb;font-size:13px}
+main{max-width:980px;margin:auto;padding:14px;display:grid;gap:13px}.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:15px}
+h2{font-size:17px;margin:0 0 13px}h3{font-size:14px;margin:0 0 10px}.muted,.hint{color:var(--muted);font-size:12px;line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{display:grid;gap:5px}.full{grid-column:1/-1}
+label{font-size:12px;color:var(--muted);font-weight:650}input,select{width:100%;min-width:0;padding:11px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);font:inherit}
+.btn{border:1px solid var(--line);background:white;color:var(--ink);padding:10px 13px;border-radius:10px;font-weight:650}.primary{background:var(--green);color:white;border-color:var(--green)}.danger{color:var(--red)}.small{font-size:12px;padding:7px 9px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.stat{background:#f4f8f5;border-radius:11px;padding:11px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;font-size:20px;margin-top:4px}
+.good{color:var(--green)}.bad{color:var(--red)}.rowline{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.rowline:last-child{border:0}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line)}th{font-size:10px;color:var(--muted);text-transform:uppercase}.tablewrap{overflow:auto}
+.check{display:flex;align-items:center;gap:9px;padding:7px 0}.check input{width:22px;height:22px}
+.notice{background:#fff8e8;border:1px solid #efdfb7;border-radius:10px;padding:11px;font-size:12px;line-height:1.5}
+@media(min-width:700px){main{padding:22px}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:390px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}}
+</style></head>
+<body>
+<header><h1>Suivi du temps de travail</h1><p>Une fiche complète par salarié · Compteur cumulatif</p></header>
+<main>
+<nav id="employeeTabs" style="display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px">
+ <button class="btn primary" id="teamTab" onclick="showTeam()">Équipe</button>
+</nav>
+<section class="panel" id="teamPanel">
+ <div class="rowline" style="padding-top:0"><div><h2 style="margin:0">Vue d'équipe</h2><div class="muted">Synthèse des compteurs de tous les salariés</div></div><button class="btn primary" onclick="newEmployee()">＋ Ajouter un salarié</button></div>
+ <div id="teamList"></div>
+ <p class="hint">Sélectionne un onglet salarié en haut pour ouvrir son dossier individuel.</p>
+</section>
+<section class="panel hidden" id="profilePanel">
+ <div class="rowline" style="padding-top:0"><div><h2 style="margin:0">Fiche salarié</h2><div class="muted">Contrat, solde initial et planning théorique</div></div><button class="btn danger small" onclick="deleteEmployee()">Supprimer la fiche</button></div>
+ <div class="field" style="display:none"><label>Salarié</label><select id="employeeSelect"></select></div>
+ <div id="profile" class="hidden" style="margin-top:14px">
+  <div class="grid">
+   <div class="field"><label>Nom</label><input id="eName"></div>
+   <div class="field"><label>Type de contrat</label><select id="eType"><option>Temps plein</option><option>Temps partiel</option></select></div>
+   <div class="field"><label>Heures contractuelles / semaine</label><input id="eWeekly" type="number" min="0" step=".25"></div>
+   <div class="field"><label>Solde arrêté au (date incluse)</label><input id="eBalanceDate" type="date"></div>
+   <div class="field"><label>Solde à cette date (heures)</label><input id="eOpening" type="number" step=".25" placeholder="7.5 ou -5"></div>
+   <div class="field"><label>Fin de période de référence (facultatif)</label><input id="ePeriodEnd" type="date"></div>
+   <div class="field full"><label>Note</label><input id="eNote" placeholder="Poste, particularités…"></div>
+  </div>
+  <div style="margin-top:18px">
+   <h3>Planning théorique hebdomadaire</h3>
+   <p class="hint">Renseigne les horaires habituels. Deux services par jour sont possibles. Le planning sert de base au calcul des heures théoriquement prévues.</p>
+   <div class="field" style="max-width:240px;margin-bottom:10px"><label>Ce planning s'applique à partir du</label><input id="scheduleFrom" type="date"></div>
+   <div id="scheduleEditor"></div>
+   <div class="actions"><button class="btn" onclick="saveSchedule()">Enregistrer ce planning</button></div>
+   <div id="scheduleHistory" class="hint" style="margin-top:8px"></div>
+  </div>
+  <div class="actions"><button class="btn primary" onclick="saveProfile()">Enregistrer la fiche</button><button class="btn danger" onclick="deleteEmployee()">Supprimer le salarié</button></div>
+  <p class="hint">Le solde saisi comprend toute la période jusqu'à la date indiquée, incluse. Le calcul automatique reprend le lendemain : les heures travaillées, payées et théoriques de la période antérieure ne sont pas recomptées. Solde positif : l'entreprise doit des heures au salarié. Solde négatif : solde en faveur de l'entreprise, à vérifier selon les règles applicables.</p>
+ </div>
+</section>
+<section id="employeeArea" class="hidden">
+ <section class="panel">
+  <h2>Compte temps actuel</h2>
+  <div class="stats">
+   <div class="stat"><small>Solde actuel</small><strong id="balance">—</strong></div>
+   <div class="stat"><small>Solde de départ</small><strong id="openingDisplay">—</strong></div>
+   <div class="stat"><small>Heures travaillées depuis le départ</small><strong id="workedDisplay">—</strong></div>
+   <div class="stat"><small>Heures complémentaires payées</small><strong id="paidDisplay">—</strong></div>
+  </div>
+  <p class="hint" id="balanceExplain"></p>
+ </section>
+ <section class="panel">
+  <h2>Ajouter une journée travaillée</h2>
+  <div class="grid">
+   <div class="field"><label>Date</label><input id="wDate" type="date"></div>
+   <div class="field"><label>Arrivée – service 1</label><input id="wStart1" type="time"></div>
+   <div class="field"><label>Départ – service 1</label><input id="wEnd1" type="time"></div>
+   <div class="field"><label>Arrivée – service 2 (facultatif)</label><input id="wStart2" type="time"></div>
+   <div class="field"><label>Départ – service 2 (facultatif)</label><input id="wEnd2" type="time"></div>
+   <div class="field"><label>Pause à déduire (minutes)</label><input id="wBreak" type="number" min="0" step="5" value="0"></div>
+   <div class="field"><label>Temps travaillé calculé</label><input id="wCalculated" readonly placeholder="—"></div>
+   <div class="field"><label>Commentaire</label><input id="wNote" placeholder="Service, remplacement…"></div>
+   <div class="field full"><label class="check"><input id="wMeal" type="checkbox"> Repas pris ce jour</label></div>
+  </div>
+  <div class="actions"><button class="btn primary" onclick="addWork()">Enregistrer la journée</button></div>
+  <p class="hint">Tu peux renseigner un ou deux services dans la même journée. La pause indiquée est déduite du total des deux services. Les horaires de nuit après minuit sont pris en compte.</p>
+ </section>
+ <section class="panel">
+  <h2>Heures complémentaires payées</h2>
+  <div class="grid">
+   <div class="field"><label>Date de paiement</label><input id="pDate" type="date"></div>
+   <div class="field"><label>Nombre d'heures payées</label><input id="pHours" type="number" min="0" step=".25"></div>
+   <div class="field full"><label>Commentaire / bulletin de paie</label><input id="pNote" placeholder="Paie de novembre…"></div>
+  </div>
+  <div class="actions"><button class="btn primary" onclick="addPaid()">Enregistrer les heures payées</button></div>
+ </section>
+ <section class="panel">
+  <h2>Historique des journées</h2><div id="workHistory"></div>
+ </section>
+ <section class="panel">
+  <h2>Historique des heures payées</h2><div id="paidHistory"></div>
+ </section>
+ <section class="panel">
+  <h2>Récapitulatif des repas</h2>
+  <div class="field" style="max-width:220px;margin-bottom:10px"><label>Mois</label><input id="mealMonth" type="month"></div>
+  <div id="mealSummary"></div>
+ </section>
+</section>
+<section class="panel">
+ <h2>Sauvegarde et transfert</h2>
+ <div class="actions"><button class="btn primary" onclick="exportData()">Exporter les données</button><label class="btn" for="importFile">Importer une sauvegarde</label><input id="importFile" type="file" accept="application/json" style="display:none" onchange="importData(event)"></div>
+ <p class="hint">Les données restent sur cet appareil et dans ce navigateur. Pour les transférer vers un autre appareil, exporte puis importe le fichier JSON.</p>
+ <div class="notice">Conserve une sauvegarde régulière. Évite la navigation privée et ne supprime pas les données du navigateur sans sauvegarde.</div>
+</section>
+</main>
+<script>
+const KEY='suivi_temps_salaries_v2';
+let db;try{db=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){db=null}
+if(!db)db={employees:[],work:[],paid:[]};
+if(!Array.isArray(db.employees))db.employees=[];
+if(!Array.isArray(db.work))db.work=[];
+if(!Array.isArray(db.paid))db.paid=[];
+db.work=db.work.map(x=>({...x,meal:!!x.meal}));
+let currentId=null;
+const $=id=>document.getElementById(id);
+const today=()=>{let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+$('wDate').value=today();$('pDate').value=today();$('mealMonth').value=today().slice(0,7);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmt(n){let sign=n<0?'-':'';n=Math.abs(n);let h=Math.floor(n+1e-8),m=Math.round((n-h)*60);if(m===60){h++;m=0}return sign+h+' h'+(m?' '+String(m).padStart(2,'0'):'');}
+function persist(){localStorage.setItem(KEY,JSON.stringify(db));renderAll();}
+function selected(){return db.employees.find(e=>e.id===currentId)}
+function duration(a,b){if(!a||!b)return 0;let [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);let mins=bh*60+bm-(ah*60+am);if(mins<0)mins+=1440;return mins/60;}
+function calcHours(){let a=duration($('wStart1').value,$('wEnd1').value),b=duration($('wStart2').value,$('wEnd2').value),br=Number($('wBreak').value||0)/60;let total=a+b-br;$('wCalculated').value=total>=0?fmt(total):'Pause supérieure aux heures';return total;}
+['wStart1','wEnd1','wStart2','wEnd2','wBreak'].forEach(id=>$(id).addEventListener('input',calcHours));
+function accrued(weekly,from,to){if(!from||!to||to<from)return 0;let days=Math.floor((new Date(to+'T12:00:00')-new Date(from+'T12:00:00'))/86400000)+1;return Number(weekly||0)*days/7;}
+const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+function emptySchedule(){let o={};for(let d=0;d<7;d++)o[d]={a:'',b:'',c:'',d:''};return o;}
+function shiftDuration(a,b){return duration(a,b);}
+function scheduleDayHours(day){return shiftDuration(day.a,day.b)+shiftDuration(day.c,day.d);}
+function renderScheduleEditor(e){
+ let sch=emptySchedule();
+ if(e.schedules&&e.schedules.length){let latest=[...e.schedules].sort((a,b)=>b.from.localeCompare(a.from))[0];sch=latest.days||sch;$('scheduleFrom').value=today();}
+ else {$('scheduleFrom').value=e.balanceDate||today();}
+ $('scheduleEditor').innerHTML='<div class="tablewrap"><table><thead><tr><th>Jour</th><th>Service 1 début</th><th>Fin</th><th>Service 2 début</th><th>Fin</th><th>Total</th></tr></thead><tbody>'+
+ dayNames.map((name,d)=>{let x=sch[d]||{};return `<tr><td>${name}</td><td><input type="time" id="s${d}a" value="${x.a||''}"></td><td><input type="time" id="s${d}b" value="${x.b||''}"></td><td><input type="time" id="s${d}c" value="${x.c||''}"></td><td><input type="time" id="s${d}d" value="${x.d||''}"></td><td id="st${d}">${fmt(scheduleDayHours(x))}</td></tr>`}).join('')+'</tbody></table></div>';
+ for(let d=0;d<7;d++)['a','b','c','d'].forEach(k=>$(`s${d}${k}`).addEventListener('input',()=>{let x={a:$(`s${d}a`).value,b:$(`s${d}b`).value,c:$(`s${d}c`).value,d:$(`s${d}d`).value};$(`st${d}`).textContent=fmt(scheduleDayHours(x));}));
+ renderScheduleHistory(e);
+}
+function renderScheduleHistory(e){
+ let arr=[...(e.schedules||[])].sort((a,b)=>b.from.localeCompare(a.from));
+ $('scheduleHistory').innerHTML=arr.length?'<strong>Plannings enregistrés :</strong><br>'+arr.map(x=>`À partir du ${esc(x.from)} · ${fmt(Object.values(x.days||{}).reduce((n,d)=>n+scheduleDayHours(d),0))} / semaine`).join('<br>'):'Aucun planning enregistré : le calcul reste basé sur le volume contractuel hebdomadaire réparti sur 7 jours.';
+}
+function saveSchedule(){
+ let e=selected();if(!e)return;let from=$('scheduleFrom').value;if(!from){alert('Indique la date d’application du planning.');return;}
+ let days={};for(let d=0;d<7;d++){let x={a:$(`s${d}a`).value,b:$(`s${d}b`).value,c:$(`s${d}c`).value,d:$(`s${d}d`).value};if((x.a&&!x.b)||(!x.a&&x.b)||(x.c&&!x.d)||(!x.c&&x.d)){alert('Chaque service doit avoir une heure de début et de fin.');return;}days[d]=x;}
+ let weekly=Object.values(days).reduce((n,x)=>n+scheduleDayHours(x),0);
+ if(!confirm(`Enregistrer ce planning à partir du ${from} ?\nTotal hebdomadaire prévu : ${fmt(weekly)}.\nLe planning sera utilisé pour calculer les heures théoriques à partir de cette date.`))return;
+ if(!Array.isArray(e.schedules))e.schedules=[];
+ e.schedules=e.schedules.filter(x=>x.from!==from);e.schedules.push({from,days});
+ persist();
+}
+function expectedFromSchedule(e,from,to){
+ let schedules=(e.schedules||[]).filter(x=>x.from<=to).sort((a,b)=>a.from.localeCompare(b.from));
+ if(!schedules.length)return null;
+ let total=0,cur=new Date(from+'T12:00:00'),end=new Date(to+'T12:00:00');
+ while(cur<=end){let ds=cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')+'-'+String(cur.getDate()).padStart(2,'0');
+  let applicable=null;for(let x of schedules){if(x.from<=ds)applicable=x;else break;}
+  if(applicable){let day=applicable.days[cur.getDay()]||{};total+=scheduleDayHours(day);}
+  cur.setDate(cur.getDate()+1);
+ }
+ return total;
+}
+function nextDate(date){let d=new Date(date+'T12:00:00');d.setDate(d.getDate()+1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function totals(e){let asOf=e.balanceDate||today(),from=nextDate(asOf),to=today();if(to<from)return{actual:0,paid:0,expected:0,balance:Number(e.opening||0)};let works=db.work.filter(x=>x.employee===e.id&&x.date>asOf&&x.date<=to);let paid=db.paid.filter(x=>x.employee===e.id&&x.date>asOf&&x.date<=to);let actual=works.reduce((s,x)=>s+Number(x.hours||0),0),paidH=paid.reduce((s,x)=>s+Number(x.hours||0),0),scheduled=expectedFromSchedule(e,from,to),expected=scheduled===null?accrued(e.weekly,from,to):scheduled;return{actual,paid:paidH,expected,balance:Number(e.opening||0)+actual-expected-paidH};}
+function renderSelect(){
+ let sel=$('employeeSelect');sel.innerHTML='<option value="">— Choisir un salarié —</option>'+db.employees.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');sel.value=currentId||'';
+ let nav=$('employeeTabs');nav.innerHTML='<button class="btn '+(!currentId?'primary':'')+'" id="teamTab" onclick="showTeam()">Équipe</button>'+db.employees.map(e=>`<button class="btn ${currentId===e.id?'primary':''}" onclick="openEmployee('${e.id}')">${esc(e.name||'Salarié')}</button>`).join('')+'<button class="btn" onclick="newEmployee()">＋ Ajouter</button>';
+}
+function showTeam(){currentId=null;renderAll();}
+function openEmployee(id){currentId=id;renderAll();}
+$('employeeSelect').onchange=()=>{currentId=$('employeeSelect').value||null;renderAll();};
+function newEmployee(){let e={id:String(Date.now()),name:'Nouveau salarié',type:'Temps partiel',weekly:0,balanceDate:today(),opening:0,periodEnd:'',note:''};db.employees.push(e);currentId=e.id;renderAll();$('eName').focus();$('eName').select();}
+function loadProfile(){let e=selected();$('profile').classList.toggle('hidden',!e);$('profilePanel').classList.toggle('hidden',!e);$('employeeArea').classList.toggle('hidden',!e);$('teamPanel').classList.toggle('hidden',!!e);if(!e)return;$('eName').value=e.name;$('eType').value=e.type||'Temps partiel';$('eWeekly').value=e.weekly;$('eBalanceDate').value=e.balanceDate||today();$('eOpening').value=e.opening??0;$('ePeriodEnd').value=e.periodEnd||'';$('eNote').value=e.note||'';renderScheduleEditor(e);}
+function saveProfile(){let e=selected();if(!e)return;let name=$('eName').value.trim(),weekly=Number($('eWeekly').value),date=$('eBalanceDate').value;if(!name||!date||!Number.isFinite(weekly)||weekly<0){alert('Vérifie le nom, la date de départ et les heures hebdomadaires.');return;}e.name=name;e.type=$('eType').value;e.weekly=weekly;e.balanceDate=date;e.opening=Number($('eOpening').value||0);e.periodEnd=$('ePeriodEnd').value;e.note=$('eNote').value;persist();}
+function deleteEmployee(){let e=selected();if(!e||!confirm('Supprimer cette fiche et tout son historique ?'))return;db.employees=db.employees.filter(x=>x.id!==e.id);db.work=db.work.filter(x=>x.employee!==e.id);db.paid=db.paid.filter(x=>x.employee!==e.id);currentId=null;persist();}
+function addWork(){let e=selected();if(!e)return;let date=$('wDate').value,a=$('wStart1').value,b=$('wEnd1').value,c=$('wStart2').value,d=$('wEnd2').value,br=Number($('wBreak').value||0);if(!date||(!a&&!c)|| (a&&!b)||(b&&!a)||(c&&!d)||(d&&!c)){alert('Renseigne une date et des horaires complets pour chaque service commencé.');return;}let hours=duration(a,b)+duration(c,d)-br/60;if(hours<=0){alert('Le temps travaillé calculé doit être supérieur à zéro. Vérifie les horaires et la pause.');return;}db.work.push({id:String(Date.now()),employee:e.id,date,hours,start1:a,end1:b,start2:c,end2:d,breakMinutes:br,meal:$('wMeal').checked,note:$('wNote').value});$('wStart1').value='';$('wEnd1').value='';$('wStart2').value='';$('wEnd2').value='';$('wBreak').value='0';$('wMeal').checked=false;$('wNote').value='';calcHours();persist();}
+function addPaid(){let e=selected();if(!e)return;let date=$('pDate').value,h=Number($('pHours').value);if(!date||!Number.isFinite(h)||h<=0){alert('Renseigne une date et un nombre d’heures supérieur à zéro.');return;}db.paid.push({id:String(Date.now()),employee:e.id,date,hours:h,note:$('pNote').value});$('pHours').value='';$('pNote').value='';persist();}
+function removeItem(type,id){if(!confirm('Supprimer cette ligne de l’historique ?'))return;db[type]=db[type].filter(x=>x.id!==id);persist();}
+function workTable(e){let arr=db.work.filter(x=>x.employee===e.id).sort((a,b)=>b.date.localeCompare(a.date));if(!arr.length)return'<p class="muted">Aucune journée saisie.</p>';return'<div class="tablewrap"><table><thead><tr><th>Date</th><th>Horaires</th><th>Pause</th><th>Total</th><th>Repas</th><th></th></tr></thead><tbody>'+arr.map(x=>{let shifts=[x.start1&&x.end1?x.start1+'–'+x.end1:'',x.start2&&x.end2?x.start2+'–'+x.end2:''].filter(Boolean).join(' / ')||'Ancienne saisie';return`<tr><td>${esc(x.date)}</td><td>${esc(shifts)}</td><td>${Number(x.breakMinutes||0)} min</td><td>${fmt(Number(x.hours))}</td><td>${x.meal?'Oui':'—'}</td><td><button class="btn small danger" onclick="removeItem('work','${x.id}')">Suppr.</button></td></tr>`}).join('')+'</tbody></table></div>';}
+function paidTable(e){let arr=db.paid.filter(x=>x.employee===e.id).sort((a,b)=>b.date.localeCompare(a.date));if(!arr.length)return'<p class="muted">Aucune heure payée enregistrée.</p>';return'<div class="tablewrap"><table><thead><tr><th>Date</th><th>Heures payées</th><th>Commentaire</th><th></th></tr></thead><tbody>'+arr.map(x=>`<tr><td>${esc(x.date)}</td><td>${fmt(Number(x.hours))}</td><td>${esc(x.note)}</td><td><button class="btn small danger" onclick="removeItem('paid','${x.id}')">Suppr.</button></td></tr>`).join('')+'</tbody></table></div>';}
+function renderArea(){let e=selected();if(!e)return;let t=totals(e);$('balance').textContent=fmt(t.balance);$('balance').className=t.balance>=0?'good':'bad';$('openingDisplay').textContent=fmt(Number(e.opening||0));$('workedDisplay').textContent=fmt(t.actual);$('paidDisplay').textContent=fmt(t.paid);$('balanceExplain').textContent=`Solde de reprise arrêté au ${e.balanceDate||'date non définie'} (date incluse). Le nouveau calcul commence le lendemain : heures travaillées (${fmt(t.actual)}) − heures théoriques prévues (${fmt(t.expected)}) − heures complémentaires payées (${fmt(t.paid)}). ${e.schedules&&e.schedules.length?'Calcul basé sur le planning hebdomadaire enregistré.':'En l’absence de planning, le volume hebdomadaire du contrat est réparti sur 7 jours.'}`; $('workHistory').innerHTML=workTable(e);$('paidHistory').innerHTML=paidTable(e);let month=$('mealMonth').value||today().slice(0,7),n=db.work.filter(x=>x.employee===e.id&&x.date.startsWith(month)&&x.meal).length;$('mealSummary').innerHTML=`<div class="rowline"><span>${esc(e.name)} · ${month}</span><strong>${n} repas</strong></div>`;}
+$('mealMonth').onchange=()=>{let e=selected();if(e)renderArea();};
+function renderTeam(){
+ $('teamList').innerHTML=db.employees.length?db.employees.map(e=>{let t=totals(e);return `<div class="rowline"><div><strong>${esc(e.name)}</strong><div class="muted">${Number(e.weekly||0)} h / semaine · ${esc(e.type||'')}</div></div><div style="text-align:right"><strong class="${t.balance>=0?'good':'bad'}">${fmt(t.balance)}</strong><div><button class="btn small" onclick="openEmployee('${e.id}')">Ouvrir le dossier</button></div></div></div>`}).join(''):'<p class="muted">Aucun salarié. Clique sur « Ajouter » pour créer une fiche.</p>';
+}
+function renderAll(){renderSelect();loadProfile();renderTeam();let e=selected();if(e)renderArea();}
+function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sauvegarde-temps-travail-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+function importData(ev){let f=ev.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.employees)||!Array.isArray(d.work)||!Array.isArray(d.paid))throw Error();if(!confirm('Remplacer toutes les données actuelles par cette sauvegarde ?'))return;db=d;currentId=db.employees[0]?.id||null;persist();alert('Sauvegarde importée.');}catch(e){alert('Fichier invalide ou incompatible.');}};r.readAsText(f);ev.target.value='';}
+renderAll();
+</script></body></html>
