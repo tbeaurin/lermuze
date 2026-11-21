@@ -176,6 +176,13 @@ tbody tr:last-child td{border-bottom:0}
 .notice{background:#fbf1dc;border:1px solid #edd9a8;border-left:4px solid var(--amber);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;color:#4a3b1c}
 .backupbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;font-size:13.5px}
 .hidden{display:none!important}
+.gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(22,36,30,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.gate.hidden{display:none}
+.gate-card{width:min(100%,480px);padding:30px 24px 22px;border-radius:22px;background:var(--paper);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.gate-card .eyebrow{color:var(--amber-ink)}
+.gate-card h2{margin:4px 0 10px;font-size:27px;line-height:1.15}
+.gate-card .muted{font-size:14.5px}
+.gate-btn{width:100%;min-height:68px;margin:20px 0 4px;font-size:20px;border-radius:16px;gap:10px}
 .toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));z-index:50;max-width:calc(100% - 32px);padding:12px 18px;border-radius:999px;background:var(--night);color:var(--cream);font-size:14.5px;font-weight:600;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transform:translate(-50%,16px);transition:opacity .2s,transform .2s}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
@@ -205,7 +212,6 @@ tbody tr:last-child td{border-bottom:0}
 </div></header>
 
 <main>
-<div id="backupBar" class="notice backupbar hidden"></div>
 <nav id="nav" class="tabs" aria-label="Navigation"></nav>
 
 <!-- Vue Équipe : une ligne par salarié -->
@@ -326,6 +332,16 @@ tbody tr:last-child td{border-bottom:0}
  <div class="notice mt">Conserve une sauvegarde régulière. Évite la navigation privée et ne supprime pas les données du navigateur sans sauvegarde.</div>
 </section>
 </main>
+<!-- Sauvegarde obligatoire : bloque l'appli tant que l'export du jour n'est pas fait -->
+<div id="backupGate" class="gate hidden" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+ <div class="gate-card">
+  <p class="eyebrow">Sauvegarde du jour</p>
+  <h2 id="gateTitle">Exporte les données avant de commencer</h2>
+  <p id="gateText" class="muted"></p>
+  <button class="btn primary gate-btn" data-action="export"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Exporter les données</button>
+  <p class="hint">Le fichier est enregistré dans Téléchargements (ou dans l'app « Fichiers » sur iPad). Garde-le en lieu sûr : c'est lui qui permet de tout restaurer.</p>
+ </div>
+</div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -586,15 +602,18 @@ function newEmployee(){
 function deleteEmployee(){const e=selected();if(!e||!confirm(`Supprimer la fiche de ${e.name} et tout son historique ?`))return;db.employees=db.employees.filter(x=>x.id!==e.id);db.work=db.work.filter(x=>x.employee!==e.id);db.paid=db.paid.filter(x=>x.employee!==e.id);currentId=null;loadedId=null;view='team';persist()}
 
 /* ---------- Sauvegarde ---------- */
-function exportData(){flushProfile();db.meta.lastExport=Date.now();let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sauvegarde-temps-travail-'+today()+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);store();renderBackupBar()}
+function exportData(){flushProfile();db.meta.lastExport=Date.now();let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sauvegarde-temps-travail-'+today()+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);store();renderBackupBar();toast('Sauvegarde du jour exportée')}
 function importData(ev){let f=ev.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.employees)||!Array.isArray(d.work)||!Array.isArray(d.paid))throw Error();if(!confirm('Remplacer toutes les données actuelles par cette sauvegarde ?'))return;db=normalize(d);currentId=null;loadedId=null;view='team';persist();alert('Sauvegarde importée.')}catch(e){alert('Fichier invalide ou incompatible.')}};r.readAsText(f);ev.target.value=''}
 $('importFile').addEventListener('change',importData);
-// Rappel : une sauvegarde par jour dès qu'il y a des modifications non exportées
+// Sauvegarde obligatoire : à la première ouverture de la journée, l'appli reste
+// bloquée tant que l'export du jour n'a pas été fait (s'il y a des données).
 function renderBackupBar(){
- let m=db.meta,last=m.lastExport?ymd(new Date(m.lastExport)):'',hasData=db.employees.length||db.work.length||db.paid.length;
- let needed=hasData&&(!last||((m.lastChange||0)>m.lastExport&&last!==today()));
- $('backupBar').classList.toggle('hidden',!needed);if(!needed)return;
- $('backupBar').innerHTML='<span><strong>Sauvegarde du jour à faire</strong> — '+(last?'dernière sauvegarde le '+frDate(last):'aucune sauvegarde faite sur cet appareil')+'</span><button class="btn primary small" data-action="export">Exporter maintenant</button>';
+ const m=db.meta,last=m.lastExport?ymd(new Date(m.lastExport)):'',hasData=db.employees.length||db.work.length||db.paid.length;
+ const locked=!!hasData&&last!==today();
+ $('backupGate').classList.toggle('hidden',!locked);
+ document.querySelector('main').inert=locked;
+ document.body.style.overflow=locked?'hidden':'';
+ if(locked)$('gateText').textContent=last?`Dernière sauvegarde : ${frDay(last)}. Une sauvegarde par jour est nécessaire avant d'utiliser l'appli.`:`Aucune sauvegarde n'a encore été faite sur cet appareil. Une sauvegarde par jour est nécessaire avant d'utiliser l'appli.`;
 }
 
 /* ---------- Rendu et événements ---------- */
