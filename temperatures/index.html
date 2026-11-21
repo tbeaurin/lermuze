@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16241e">
+<title>La Lermuze – Suivi des températures</title>
+<link rel="icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#16241e;--green:#243b32;--green-2:#365b4b;
+  --cream:#f5f2e9;--cream-2:#ebe5d6;--paper:#fffdf8;
+  --ink:#1f2a24;--muted:#66736b;--line:#e4dece;--field:#d6cfbe;
+  --amber:#e0a04a;--amber-ink:#8a5a14;
+  --ok:#2a7a4f;--ok-bg:#e3f1e8;--red:#a83232;--red-bg:#fbe8e5;--warn-bg:#f8edd3;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --shadow:0 1px 2px rgba(22,36,30,.05),0 12px 28px -14px rgba(22,36,30,.22);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
+
+/* En-tête : même ambiance que la page d'accueil */
+header{position:relative;overflow:hidden;background:var(--night);color:var(--cream);padding:max(18px,env(safe-area-inset-top)) 18px 26px}
+header::before{content:"";position:absolute;inset:-40px;background:url(../img/la-lermuze.jpg) center 60%/cover;filter:blur(26px) saturate(1.1);opacity:.45}
+header::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(22,36,30,.97) 35%,rgba(22,36,30,.72))}
+.head-in{position:relative;z-index:1;max-width:900px;margin:0 auto}
+.back{display:inline-flex;align-items:center;gap:6px;margin:0 0 16px;padding:6px 13px 6px 9px;border-radius:999px;border:1px solid rgba(245,242,233,.22);background:rgba(245,242,233,.06);color:var(--cream);font-size:13px;text-decoration:none;transition:background .2s,border-color .2s}
+.back:hover{background:rgba(245,242,233,.12);border-color:rgba(224,160,74,.6)}
+.eyebrow{margin:0 0 4px;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);font-weight:650}
+header h1{margin:0;font-family:var(--serif);font-weight:600;font-size:clamp(28px,6vw,38px);line-height:1.05;letter-spacing:-.01em}
+.sub{margin:8px 0 0;color:#cfd8d1;font-size:13px}
+
+/* Mise en page et onglets */
+.wrap{max-width:900px;margin:0 auto;padding:0 14px 40px}
+.tabs{position:sticky;top:0;z-index:10;display:flex;gap:6px;overflow-x:auto;margin:0 -14px 14px;padding:12px 14px;background:rgba(245,242,233,.93);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;white-space:nowrap;border:1px solid var(--line);background:var(--paper);color:var(--green);padding:10px 16px;border-radius:999px;font:inherit;font-size:14.5px;font-weight:650;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.tabs button:hover{border-color:var(--green-2)}
+.tabs button.active{background:var(--night);border-color:var(--night);color:var(--cream)}
+.panel{display:none}
+.panel.active{display:block;animation:fade .25s ease}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 14px;font-family:var(--serif);font-weight:600;font-size:21px;letter-spacing:-.005em}
+.subhead{margin:22px 0 8px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* Formulaires */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.field{margin-bottom:12px}
+label{display:block;margin:0 0 6px;font-size:13px;font-weight:650;color:var(--muted)}
+input,select,textarea{width:100%;min-height:48px;padding:12px 13px;font:inherit;color:var(--ink);background:#fff;border:1px solid var(--field);border-radius:12px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green-2);box-shadow:0 0 0 3px rgba(224,160,74,.32)}
+textarea{min-height:84px;resize:vertical}
+input[type=file]{padding:10px;background:var(--cream)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:12px 18px;border:1px solid transparent;border-radius:12px;font:inherit;font-weight:700;background:var(--night);color:var(--cream);cursor:pointer;transition:background .15s,transform .1s}
+.btn:hover{background:var(--green)}
+.btn:active{transform:scale(.98)}
+.btn:focus-visible,.tabs button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.btn.secondary{background:var(--cream-2);color:var(--green)}
+.btn.secondary:hover{background:#e1dac8}
+.btn.danger{background:var(--red-bg);color:var(--red)}
+.btn.danger:hover{background:#f6d8d3}
+.btn.full{width:100%}
+.btn.sm{min-height:0;padding:7px 12px;font-size:13px;border-radius:10px}
+.hint{font-size:12.5px;color:var(--muted);line-height:1.5}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.actions>*{flex:1}
+
+/* Indicateurs */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat strong{display:block;font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.1;color:var(--green);font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:4px;font-size:12.5px;color:var(--muted);line-height:1.3}
+.stat.alert{background:var(--red-bg);border-color:#f0c9c3}
+.stat.alert strong{color:var(--red)}
+
+/* Dernières températures */
+.readings{display:grid;gap:8px}
+.reading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--field);border-radius:12px}
+.reading.is-good{border-left-color:var(--ok)}
+.reading.is-bad{border-left-color:var(--red);background:#fff8f6}
+.reading.is-warn{border-left-color:var(--amber)}
+.reading strong{display:block}
+.reading small{display:block;margin-top:2px;color:var(--muted);font-size:13px}
+.reading-val{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.temp{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.temp em{margin-left:2px;font-style:normal;font-size:.55em;color:var(--muted)}
+@media(max-width:420px){.reading{flex-wrap:wrap}.reading-val{width:100%;justify-content:space-between}}
+
+/* Listes */
+.equipment{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.equipment:last-child{border-bottom:0}
+.equipment small{color:var(--muted);font-size:13px}
+.pill{display:inline-block;font-size:12px;font-weight:750;border-radius:999px;padding:5px 10px;white-space:nowrap}
+.good{background:var(--ok-bg);color:var(--ok)}
+.bad{background:var(--red-bg);color:var(--red)}
+.warn{background:var(--warn-bg);color:var(--amber-ink)}
+.record{padding:14px 0;border-bottom:1px solid var(--line)}
+.record:last-child{border-bottom:0}
+.recordtop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.record small{color:var(--muted)}
+.record p{margin:6px 0;font-size:14px}
+.record .btn{margin-top:8px}
+.empty{color:var(--muted);text-align:center;padding:22px;font-family:var(--serif);font-style:italic}
+.notice{background:#fbf1dc;border:1px solid #edd9a8;border-left:4px solid var(--amber);border-radius:12px;padding:13px 14px;font-size:13.5px;line-height:1.5;color:#4a3b1c}
+.hidden{display:none!important}
+.legal{margin-top:14px;text-align:center}
+
+/* Relevé groupé */
+.batch-row{display:grid;grid-template-columns:minmax(0,1fr) 130px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.batch-row:last-child{border-bottom:0}
+.batch-row strong{display:block;font-size:15.5px}
+.batch-row small{color:var(--muted);font-size:12.5px}
+.batch-row input[data-batch-temp]{min-height:54px;text-align:center;font-size:22px;font-weight:650;font-variant-numeric:tabular-nums}
+.batch-row:has(.batch-correction:not(.hidden)) input[data-batch-temp]{border-color:var(--red);color:var(--red);background:#fff8f6}
+.batch-correction{grid-column:1/-1;padding:12px;border-radius:12px;background:var(--red-bg);border:1px solid #f0c9c3}
+.batch-correction label{color:var(--red)}
+.batch-correction textarea{min-height:64px;margin-bottom:10px}
+@media(max-width:420px){.batch-row{grid-template-columns:1fr 110px}}
+
+/* Tableaux */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--cream);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td small{display:block;color:var(--muted);margin-top:3px}
+
+/* Récapitulatif */
+.summary-tools{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;padding:12px;background:var(--cream);border-radius:14px}
+.summary-tools .field{flex:1;min-width:150px;margin:0}
+#recapPeriodLabel{margin-top:10px}
+.summary-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.summary-kpis .stat{padding:12px}
+.summary-kpis strong{font-size:26px}
+
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body{background:#fff}
+  header{background:none;color:#000;padding:0 0 8px}
+  header::before,header::after,.back{display:none}
+  .eyebrow{color:#000}.sub{color:#333}
+  .tabs,.summary-tools,.no-print{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .panel{display:none!important}
+  #recap.panel{display:block!important;animation:none}
+  .card{box-shadow:none;border:0;padding:6px;margin:0 0 10px}
+  .stat,th{background:none}
+  .table-wrap{border:0;overflow:visible}
+  table{font-size:10px}th,td{padding:5px}
+  .pill{border:1px solid currentColor}
+}
+</style></head><body>
+<header><div class="head-in">
+<a class="back" href="../"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Accueil</a>
+<p class="eyebrow">La Lermuze · HACCP</p>
+<h1>Suivi des températures</h1>
+<p class="sub">Montée de la Croisette · 07530 Vallées-d’Antraigues-Asperjoc</p>
+</div></header>
+<div class="wrap"><nav class="tabs"><button class="active" data-tab="home">Tableau de bord</button><button data-tab="entry">Nouveau relevé</button><button data-tab="recap">Récapitulatif</button><button data-tab="history">Historique</button><button data-tab="settings">Paramètres</button><button data-tab="backup">Exports & sauvegarde</button></nav>
+<section id="home" class="panel active"><div class="card"><h2>Vue d'ensemble</h2><div class="stats"><div class="stat"><strong id="countToday">0</strong><span>Relevés aujourd'hui</span></div><div class="stat"><strong id="countAlert">0</strong><span>Hors seuil aujourd'hui</span></div><div class="stat"><strong id="countEquipment">5</strong><span>Équipements suivis</span></div></div></div><div class="card"><h2>Dernières températures</h2><div id="latest" class="readings"></div></div><div class="notice">Pensez à effectuer les relevés régulièrement. En cas de température hors seuil, notez immédiatement l'action corrective et le contrôle de retour à la normale.</div></section>
+<section id="entry" class="panel"><div class="card"><h2>Relevé quotidien groupé</h2><p class="hint">Sélectionnez votre prénom, saisissez les températures de tous les équipements, puis validez une seule fois. Les champs laissés vides ne seront pas enregistrés.</p><form id="batchForm"><div class="grid"><div class="field"><label for="batchPerson">Personne</label><select id="batchPerson" required></select></div><div class="field"><label for="batchDateTime">Date et heure du relevé</label><input id="batchDateTime" type="datetime-local" required></div></div><div id="batchRows"></div><div class="field" style="margin-top:14px"><label for="batchComment">Commentaire général (facultatif)</label><textarea id="batchComment" placeholder="Observation commune à plusieurs équipements…"></textarea></div><button class="btn full" type="submit">Valider tous les relevés saisis</button></form><p class="hint">Chaque température sera enregistrée séparément dans l'historique, avec le même prénom et la même heure.</p></div></section>
+<section id="recap" class="panel">
+<div class="card"><h2>Récapitulatif des températures</h2><p class="hint">Vue synthétique par équipement et historique détaillé sur la période choisie. Les relevés restent enregistrés tels quels.</p>
+<div class="summary-tools no-print"><div class="field"><label for="recapMode">Période</label><select id="recapMode"><option value="day">Une journée</option><option value="week">Une semaine</option><option value="month">Un mois</option></select></div><div class="field"><label for="recapDate">Date de référence</label><input id="recapDate" type="date"></div><button class="btn secondary" id="printRecap" type="button">Imprimer / PDF</button><button class="btn" id="exportRecap" type="button">Exporter CSV</button></div>
+<div id="recapPeriodLabel" class="hint"></div><div class="summary-kpis" id="recapStats"></div>
+<h3 class="subhead">Synthèse par équipement</h3><div class="table-wrap" id="dailySummary"></div>
+<h3 class="subhead">Historique détaillé de la période</h3><div class="table-wrap" id="periodDetails"></div>
+</div></section>
+<section id="history" class="panel"><div class="card"><h2>Historique des relevés</h2><div class="grid"><div class="field"><label for="filterEquipment">Équipement</label><select id="filterEquipment"><option value="">Tous les équipements</option></select></div><div class="field"><label for="filterDate">Date</label><input id="filterDate" type="date"></div></div><div id="historyList"></div></div></section>
+<section id="settings" class="panel"><div class="card"><h2>Équipements et seuils</h2><div id="equipmentList"></div><div class="field" style="margin-top:14px"><label for="newEquipment">Ajouter un équipement</label><input id="newEquipment" placeholder="Nom de l'équipement"></div><div class="grid"><div class="field"><label for="newMin">Température minimale (°C)</label><input id="newMin" type="number" step="0.1"></div><div class="field"><label for="newMax">Température maximale (°C)</label><input id="newMax" type="number" step="0.1"></div></div><button class="btn secondary full" id="addEquipment">Ajouter l'équipement</button></div><div class="card"><h2>Personnel</h2><div id="peopleList"></div><div class="field" style="margin-top:14px"><label for="newPerson">Ajouter un prénom</label><input id="newPerson" placeholder="Prénom"></div><button class="btn secondary full" id="addPerson">Ajouter</button></div></section>
+<section id="backup" class="panel"><div class="card"><h2>Exporter les données</h2><p>Le fichier CSV peut être ouvert avec Excel. La sauvegarde JSON contient tous les relevés, les équipements et le personnel ; elle sert à restaurer l'application.</p><p id="storageStatus" class="hint">Vérification du stockage local…</p><div class="actions"><button class="btn" id="exportCsv">Exporter Excel (CSV)</button><button class="btn secondary" id="exportJson">Sauvegarde complète (JSON)</button></div></div><div class="card"><h2>Restaurer une sauvegarde</h2><p class="hint">Choisissez un fichier JSON précédemment exporté depuis cette application. Les données actuelles seront remplacées.</p><input type="file" id="importFile" accept="application/json,.json"><button class="btn secondary full" id="importJson" style="margin-top:10px">Restaurer la sauvegarde</button></div><div class="notice"><strong>Important :</strong> les données restent sur cette tablette et dans ce navigateur. Si vous effacez les données du navigateur, changez de tablette ou désinstallez le navigateur, l'historique peut être perdu. Faites régulièrement une sauvegarde JSON et conservez-la ailleurs.</div><p class="hint legal">LES 3P – LES 3 PANGOLINS · SIRET 953 211 562 00012</p></section>
+</div>
+<script>
+(()=>{
+const DB_NAME='LaLermuzeHACCP', DB_VERSION=1, STORE='app';
+const KEY='main';
+const defaults={people:['Eric','Adrien','Nicolas','Émeline','Noé'],equipment:[{name:'Frigo cuisine tropicalisé',min:0,max:4},{name:'Frigo Marbre',min:0,max:4},{name:'Congélateur réserve',min:-30,max:-18},{name:'Frigo réserve',min:0,max:4},{name:'Congélateur laitière',min:-30,max:-15}],records:[]};
+let data;
+function openDB(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window)){reject(new Error('IndexedDB indisponible dans ce navigateur'));return}const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('Ouverture de la base impossible'))})}
+let db;
+function dbGet(){return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readonly'),req=tx.objectStore(STORE).get(KEY);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+function dbPut(value){return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(value,KEY);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error||new Error('Écriture impossible'));tx.onabort=()=>reject(tx.error||new Error('Écriture interrompue'))})}
+async function load(){if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});db=await openDB();let x=await dbGet();if(x&&Array.isArray(x.records)&&Array.isArray(x.equipment)&&Array.isArray(x.people)){data=x}else{let legacy=null;try{legacy=JSON.parse(localStorage.getItem('lermuze_haccp_local_v1'))}catch(e){};data=legacy&&Array.isArray(legacy.records)&&Array.isArray(legacy.equipment)&&Array.isArray(legacy.people)?legacy:JSON.parse(JSON.stringify(defaults));await dbPut(data)}await verifyStorage();}
+async function save(){await dbPut(data);await verifyStorage()}
+async function verifyStorage(){const check=await dbGet();if(!check||check.records.length!==data.records.length)throw new Error('La vérification après enregistrement a échoué');$('storageStatus').textContent=`Stockage local actif · ${check.records.length} relevé(s) sauvegardé(s)`}
+const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const num=v=>esc(String(v).replace('.',','));
+function localDateTime(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
+function dateKey(v){return new Date(v).toLocaleDateString('fr-CA')}
+function fmt(v){return new Date(v).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}
+function equipment(name){return data.equipment.find(e=>e.name===name)}
+function inRange(r){const e=equipment(r.equipment);return !!e&&r.temperature>=e.min&&r.temperature<=e.max}
+function fillSelects(){const opts=data.equipment.map(e=>`<option>${esc(e.name)}</option>`).join('');$('filterEquipment').innerHTML='<option value="">Tous les équipements</option>'+opts;$('batchPerson').innerHTML=data.people.map(p=>`<option>${esc(p)}</option>`).join('');$('countEquipment').textContent=data.equipment.length;renderBatchRows()}
+function renderBatchRows(){if(!$('batchRows'))return;$('batchRows').innerHTML=data.equipment.map((e,i)=>`<div class="batch-row"><div><strong>${esc(e.name)}</strong><small>Seuil : ${e.min} à ${e.max} °C</small></div><input aria-label="Température ${esc(e.name)} en degrés Celsius" data-batch-temp="${i}" type="number" step="0.1" inputmode="decimal" placeholder="°C"><div class="batch-correction hidden" data-batch-correction="${i}"><label>Action corrective (obligatoire hors seuil)</label><textarea data-batch-action="${i}" placeholder="Ex. vérifier la porte, déplacer les denrées, appeler la maintenance…"></textarea><label>Température après correction / suivi</label><input data-batch-followup="${i}" type="text" placeholder="Ex. 3,8 °C à 11 h 30"></div></div>`).join('')}
+function checkBatchTemp(input){const i=Number(input.dataset.batchTemp),e=data.equipment[i],v=parseFloat(input.value),bad=Number.isFinite(v)&&(v<e.min||v>e.max),block=document.querySelector(`[data-batch-correction="${i}"]`),action=document.querySelector(`[data-batch-action="${i}"]`);block.classList.toggle('hidden',!bad);action.required=bad}
+function renderHome(){const today=dateKey(new Date());const rows=data.records.filter(r=>dateKey(r.dateTime)===today);$('countToday').textContent=rows.length;const nAlert=rows.filter(r=>!inRange(r)).length;$('countAlert').textContent=nAlert;$('countAlert').parentElement.classList.toggle('alert',nAlert>0);const latest=data.equipment.map(e=>{const r=data.records.filter(x=>x.equipment===e.name).sort((a,b)=>b.dateTime.localeCompare(a.dateTime))[0],st=!r?'warn':inRange(r)?'good':'bad';return `<div class="reading is-${st}"><div><strong>${esc(e.name)}</strong><small>${r?`${esc(r.person)} · ${fmt(r.dateTime)}`:'Aucun relevé'}</small></div><div class="reading-val">${r?`<span class="temp">${num(r.temperature)}<em>°C</em></span>`:''}<span class="pill ${st}">${!r?'À relever':st==='good'?'Conforme':'Hors seuil'}</span></div></div>`}).join('');$('latest').innerHTML=latest||'<p class="empty">Aucun équipement configuré.</p>'}
+function renderHistory(){let rows=[...data.records].sort((a,b)=>b.dateTime.localeCompare(a.dateTime));const eq=$('filterEquipment').value,day=$('filterDate').value;if(eq)rows=rows.filter(r=>r.equipment===eq);if(day)rows=rows.filter(r=>dateKey(r.dateTime)===day);$('historyList').innerHTML=rows.length?rows.map(r=>`<div class="record"><div class="recordtop"><strong>${esc(r.equipment)} · ${num(r.temperature)} °C</strong><span class="pill ${inRange(r)?'good':'bad'}">${inRange(r)?'Conforme':'Hors seuil'}</span></div><small>${fmt(r.dateTime)} · ${esc(r.person)}</small>${r.corrective?`<p><strong>Action :</strong> ${esc(r.corrective)}</p>`:''}${r.followup?`<p><strong>Suivi :</strong> ${esc(r.followup)}</p>`:''}${r.comment?`<p>${esc(r.comment)}</p>`:''}<button class="btn danger sm" data-delete="${r.id}">Supprimer</button></div>`).join(''):'<p class="empty">Aucun relevé pour cette sélection.</p>'}
+function periodBounds(){const raw=$('recapDate').value||dateKey(new Date()),d=new Date(raw+'T12:00:00');let start=new Date(d),end=new Date(d);const mode=$('recapMode').value;if(mode==='week'){const day=(d.getDay()+6)%7;start.setDate(d.getDate()-day);end=new Date(start);end.setDate(start.getDate()+6)}else if(mode==='month'){start=new Date(d.getFullYear(),d.getMonth(),1);end=new Date(d.getFullYear(),d.getMonth()+1,0)}return {start:dateKey(start),end:dateKey(end)}}
+function renderRecap(){if(!$('recapDate').value)$('recapDate').value=dateKey(new Date());const {start,end}=periodBounds();const rows=data.records.filter(r=>{const k=dateKey(r.dateTime);return k>=start&&k<=end}).sort((a,b)=>a.dateTime.localeCompare(b.dateTime));const label=$('recapMode').value==='day'?`Journée du ${new Date(start+'T12:00:00').toLocaleDateString('fr-FR')}`:$('recapMode').value==='week'?`Semaine du ${new Date(start+'T12:00:00').toLocaleDateString('fr-FR')} au ${new Date(end+'T12:00:00').toLocaleDateString('fr-FR')}`:`Mois de ${new Date(start+'T12:00:00').toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}`;$('recapPeriodLabel').textContent=label;const alerts=rows.filter(r=>!inRange(r)).length;$('recapStats').innerHTML=`<div class="stat"><strong>${rows.length}</strong><span>Relevés</span></div><div class="stat${alerts?' alert':''}"><strong>${alerts}</strong><span>Anomalies</span></div><div class="stat"><strong>${new Set(rows.map(r=>r.equipment)).size}</strong><span>Équipements relevés</span></div>`;
+const summary=data.equipment.map(eq=>{const er=rows.filter(r=>r.equipment===eq.name),morning=er.filter(r=>new Date(r.dateTime).getHours()<14),evening=er.filter(r=>new Date(r.dateTime).getHours()>=14),formatGroup=arr=>arr.length?arr.map(r=>`${num(r.temperature)} °C <small>${new Date(r.dateTime).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} · ${esc(r.person)}</small>`).join('<hr style="border:0;border-top:1px solid var(--line);margin:5px 0">'):'—';const bad=er.some(r=>!inRange(r));return `<tr><td><strong>${esc(eq.name)}</strong><small>Seuil : ${eq.min} à ${eq.max} °C</small></td><td>${formatGroup(morning)}</td><td>${formatGroup(evening)}</td><td><span class="pill ${!er.length?'warn':bad?'bad':'good'}">${!er.length?'Non relevé':bad?'Anomalie':'Conforme'}</span></td></tr>`}).join('');$('dailySummary').innerHTML=`<table><thead><tr><th>Équipement</th><th>Matin (avant 14 h)</th><th>Après-midi / soir</th><th>Statut</th></tr></thead><tbody>${summary||'<tr><td colspan="4">Aucun équipement.</td></tr>'}</tbody></table>`;
+$('periodDetails').innerHTML=rows.length?`<table><thead><tr><th>Date / heure</th><th>Équipement</th><th>Température</th><th>Personne</th><th>Statut / action corrective</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${fmt(r.dateTime)}</td><td>${esc(r.equipment)}</td><td><strong>${num(r.temperature)} °C</strong></td><td>${esc(r.person)}</td><td><span class="pill ${inRange(r)?'good':'bad'}">${inRange(r)?'Conforme':'Hors seuil'}</span>${r.corrective?`<small>Action : ${esc(r.corrective)}</small>`:''}${r.followup?`<small>Suivi : ${esc(r.followup)}</small>`:''}${r.comment?`<small>${esc(r.comment)}</small>`:''}</td></tr>`).join('')}</tbody></table>`:'<p class="empty">Aucun relevé sur cette période.</p>'}
+function renderSettings(){$('equipmentList').innerHTML=data.equipment.map((e,i)=>`<div class="equipment"><div><strong>${esc(e.name)}</strong><br><small>${e.min} °C à ${e.max} °C</small></div><button class="btn secondary sm" data-edit-eq="${i}">Modifier</button></div>`).join('');$('peopleList').innerHTML=data.people.map((p,i)=>`<div class="equipment"><strong>${esc(p)}</strong><button class="btn danger sm" data-del-person="${i}">Retirer</button></div>`).join('')||'<p class="empty">Aucun prénom.</p>'}
+function render(){fillSelects();renderHome();renderHistory();renderSettings()}
+function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+(async()=>{try{await load();render();$('batchDateTime').value=localDateTime();$('recapDate').value=dateKey(new Date());renderRecap();}catch(err){$('storageStatus').textContent='ERREUR : stockage indisponible. Ne saisissez rien tant que ce message apparaît.';alert('Le stockage local ne fonctionne pas dans ce navigateur (navigation privée ?). Ouvrez le site dans une fenêtre normale de Chrome ou Safari. Détail : '+err.message)}})();
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='recap')renderRecap()}));
+$('batchRows').addEventListener('input',e=>{if(e.target.matches('[data-batch-temp]'))checkBatchTemp(e.target)});$('filterEquipment').addEventListener('change',renderHistory);$('filterDate').addEventListener('change',renderHistory);$('recapMode').addEventListener('change',renderRecap);$('recapDate').addEventListener('change',renderRecap);$('printRecap').addEventListener('click',()=>{renderRecap();window.print()});$('exportRecap').addEventListener('click',()=>{const {start,end}=periodBounds(),rows=data.records.filter(r=>{const k=dateKey(r.dateTime);return k>=start&&k<=end}).sort((a,b)=>a.dateTime.localeCompare(b.dateTime));const head=['Date et heure','Équipement','Température (°C)','Personne','Conforme','Action corrective','Suivi','Commentaire'];const lines=[head,...rows.map(r=>[fmt(r.dateTime),r.equipment,String(r.temperature).replace('.',','),r.person,inRange(r)?'Oui':'Non',r.corrective,r.followup,r.comment])];download(`La_Lermuze_recap_${start}_${end}.csv`,'\ufeff'+lines.map(row=>row.map(csvCell).join(';')).join('\r\n'),'text/csv;charset=utf-8')});
+$('batchForm').addEventListener('submit',async e=>{e.preventDefault();const person=$('batchPerson').value,dateTime=$('batchDateTime').value,inputs=[...document.querySelectorAll('[data-batch-temp]')];if(!person||!dateTime){alert('Sélectionnez votre prénom et la date/heure.');return}const entries=inputs.map(input=>({i:Number(input.dataset.batchTemp),temperature:input.value.trim()})).filter(x=>x.temperature!=='');if(!entries.length){alert('Saisissez au moins une température.');return}for(const x of entries){const eq=data.equipment[x.i],v=Number(x.temperature),bad=v<eq.min||v>eq.max,action=document.querySelector(`[data-batch-action="${x.i}"]`);if(!Number.isFinite(v)||(bad&&!action.value.trim())){alert(bad?`Température hors seuil pour ${eq.name} : renseignez l’action corrective.`:'Une température saisie est invalide.');return}}const comment=$('batchComment').value.trim();entries.forEach((x,n)=>{const eq=data.equipment[x.i],action=document.querySelector(`[data-batch-action="${x.i}"]`),follow=document.querySelector(`[data-batch-followup="${x.i}"]`);data.records.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,8)+n,equipment:eq.name,person,temperature:Number(x.temperature),dateTime,corrective:action.value.trim(),followup:follow.value.trim(),comment})});try{await save()}catch(err){alert('ERREUR : les relevés ne sont pas confirmés comme sauvegardés. Faites une sauvegarde dès que possible. '+err.message);return}e.target.reset();$('batchDateTime').value=localDateTime();render();document.querySelector('[data-tab="home"]').click();alert(`${entries.length} relevé(s) enregistré(s) et vérifié(s) sur la tablette.`)});
+$('historyList').addEventListener('click',async e=>{const id=e.target.dataset.delete;if(id&&confirm('Supprimer définitivement ce relevé ?')){data.records=data.records.filter(r=>r.id!==id);await save();render()}});
+$('addEquipment').addEventListener('click',async()=>{const name=$('newEquipment').value.trim(),min=parseFloat($('newMin').value),max=parseFloat($('newMax').value);if(!name||!Number.isFinite(min)||!Number.isFinite(max)||min>max){alert('Indiquez un nom et des seuils valides.');return}if(data.equipment.some(e=>e.name.toLowerCase()===name.toLowerCase())){alert('Cet équipement existe déjà.');return}data.equipment.push({name,min,max});$('newEquipment').value='';$('newMin').value='';$('newMax').value='';await save();render()});
+$('equipmentList').addEventListener('click',async e=>{const i=e.target.dataset.editEq;if(i===undefined)return;const old=data.equipment[Number(i)],name=prompt('Nom de l’équipement',old.name);if(name===null)return;const min=prompt('Température minimale (°C)',old.min);if(min===null)return;const max=prompt('Température maximale (°C)',old.max);if(max===null)return;const a=parseFloat(min),b=parseFloat(max);if(!name.trim()||!Number.isFinite(a)||!Number.isFinite(b)||a>b){alert('Valeurs invalides.');return}const previous=old.name;old.name=name.trim();old.min=a;old.max=b;data.records.forEach(r=>{if(r.equipment===previous)r.equipment=old.name});await save();render()});
+$('addPerson').addEventListener('click',async()=>{const p=$('newPerson').value.trim();if(!p)return;if(data.people.some(x=>x.toLowerCase()===p.toLowerCase())){alert('Ce prénom existe déjà.');return}data.people.push(p);$('newPerson').value='';await save();render()});
+$('peopleList').addEventListener('click',async e=>{const i=e.target.dataset.delPerson;if(i===undefined)return;if(data.people.length<2){alert('Il faut conserver au moins un prénom.');return}if(confirm(`Retirer ${data.people[Number(i)]} de la liste ?`)){data.people.splice(Number(i),1);await save();render()}});
+$('exportCsv').addEventListener('click',()=>{const head=['Date et heure','Équipement','Température (°C)','Personne','Conforme','Action corrective','Suivi','Commentaire'];const lines=[head,...data.records.slice().sort((a,b)=>a.dateTime.localeCompare(b.dateTime)).map(r=>[fmt(r.dateTime),r.equipment,String(r.temperature).replace('.',','),r.person,inRange(r)?'Oui':'Non',r.corrective,r.followup,r.comment])];download('La_Lermuze_releves_temperatures.csv','\ufeff'+lines.map(row=>row.map(csvCell).join(';')).join('\r\n'),'text/csv;charset=utf-8')});
+$('exportJson').addEventListener('click',()=>download('La_Lermuze_sauvegarde_HACCP.json',JSON.stringify({...data,exportedAt:new Date().toISOString(),restaurant:'La Lermuze',siret:'95321156200012'},null,2),'application/json'));
+$('importJson').addEventListener('click',async()=>{const f=$('importFile').files[0];if(!f){alert('Choisissez un fichier JSON.');return}if(!confirm('Cette restauration remplacera les données présentes sur la tablette. Continuer ?'))return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.people)||!Array.isArray(x.equipment)||!Array.isArray(x.records))throw Error();data={people:x.people,equipment:x.equipment,records:x.records};await save();render();alert('Sauvegarde restaurée.')}catch(err){alert('Fichier invalide ou non reconnu. Aucune donnée restaurée.')}});
+})();
+</script></body></html>
